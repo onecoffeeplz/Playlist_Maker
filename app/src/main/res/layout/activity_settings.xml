@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/settings_background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/settings_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="@string/settings" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/padding">
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/settings_theme"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_menu_height"
+            android:gravity="start|center_vertical"
+            android:text="@string/dark_mode"
+            android:textColor="@color/settings_text"
+            android:textSize="@dimen/settings_text" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/settings_share"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_menu_height"
+            android:drawableEnd="@drawable/ic_share"
+            android:gravity="start|center_vertical"
+            android:text="@string/share"
+            android:textColor="@color/settings_text"
+            android:textSize="@dimen/settings_text" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/settings_support"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_menu_height"
+            android:drawableEnd="@drawable/ic_support"
+            android:gravity="start|center_vertical"
+            android:text="@string/support"
+            android:textColor="@color/settings_text"
+            android:textSize="@dimen/settings_text" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/settings_license"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_menu_height"
+            android:drawableEnd="@drawable/ic_forward"
+            android:gravity="start|center_vertical"
+            android:text="@string/license"
+            android:textColor="@color/settings_text"
+            android:textSize="@dimen/settings_text" />
+
+    </LinearLayout>
+
+</LinearLayout>
