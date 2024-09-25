@@ -12,5 +12,9 @@ class MediaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.mediaToolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 }
