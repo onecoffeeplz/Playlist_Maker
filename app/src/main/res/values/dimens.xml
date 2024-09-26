@@ -6,5 +6,5 @@
     <dimen name="icon_padding">8dp</dimen>
     <dimen name="button_text">22sp</dimen>
     <dimen name="settings_text">16sp</dimen>
-    <dimen name="settings_menu_height">61dp</dimen>
+    <dimen name="settings_menu_height">60dp</dimen>
 </resources>
