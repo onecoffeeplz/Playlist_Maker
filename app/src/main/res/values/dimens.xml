@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="padding">16dp</dimen>
+    <dimen name="button_corner_radius">16dp</dimen>
+    <dimen name="icon_padding">8dp</dimen>
+    <dimen name="button_text">22sp</dimen>
+    <dimen name="settings_text">16sp</dimen>
+    <dimen name="settings_menu_height">60dp</dimen>
+</resources>

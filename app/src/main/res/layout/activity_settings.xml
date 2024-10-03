@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/settings_background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/settings_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="@string/settings" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/settings_theme"
+        style="@style/SettingsTextView"
+        android:text="@string/dark_mode" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/settings_share"
+        style="@style/SettingsTextView"
+        android:drawableEnd="@drawable/ic_share"
+        android:text="@string/share" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/settings_support"
+        style="@style/SettingsTextView"
+        android:drawableEnd="@drawable/ic_support"
+        android:text="@string/support" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/settings_license"
+        style="@style/SettingsTextView"
+        android:drawableEnd="@drawable/ic_forward"
+        android:text="@string/license" />
+
+</LinearLayout>

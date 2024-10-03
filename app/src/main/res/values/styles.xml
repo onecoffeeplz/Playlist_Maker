@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SettingsTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:padding">@dimen/padding</item>
+        <item name="android:layout_height">@dimen/settings_menu_height</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textColor">@color/settings_text</item>
+        <item name="android:textSize">@dimen/settings_text</item>
+    </style>
+
+    <style name="MainTextButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/button_text</item>
+    </style>
+
+</resources>
