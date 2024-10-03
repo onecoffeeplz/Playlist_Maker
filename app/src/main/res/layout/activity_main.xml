@@ -24,31 +24,19 @@
             android:id="@+id/main_search_button"
             style="@style/MainTextButton"
             android:text="@string/search"
-            app:cornerRadius="@dimen/button_corner_radius"
-            app:icon="@drawable/ic_search"
-            app:iconGravity="textStart"
-            app:iconPadding="@dimen/icon_padding"
-            app:iconTint="@color/black" />
+            app:icon="@drawable/ic_search" />
 
         <Button
             android:id="@+id/main_media_button"
             style="@style/MainTextButton"
             android:text="@string/media"
-            app:cornerRadius="@dimen/button_corner_radius"
-            app:icon="@drawable/ic_media"
-            app:iconGravity="textStart"
-            app:iconPadding="@dimen/icon_padding"
-            app:iconTint="@color/black" />
+            app:icon="@drawable/ic_media" />
 
         <Button
             android:id="@+id/main_settings_button"
             style="@style/MainTextButton"
             android:text="@string/settings"
-            app:cornerRadius="@dimen/button_corner_radius"
-            app:icon="@drawable/ic_settings"
-            app:iconGravity="textStart"
-            app:iconPadding="@dimen/icon_padding"
-            app:iconTint="@color/black" />
+            app:icon="@drawable/ic_settings" />
 
     </LinearLayout>
 
