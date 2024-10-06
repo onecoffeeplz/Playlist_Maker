@@ -12,4 +12,5 @@
     <string name="support_mail_content">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="ya_android_course">https://practicum.yandex.ru/android-developer/</string>
     <string name="ya_license">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="searchbar_hint">Поиск</string>
 </resources>
