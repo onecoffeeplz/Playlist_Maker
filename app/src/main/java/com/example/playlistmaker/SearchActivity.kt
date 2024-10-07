@@ -57,4 +57,25 @@ class SearchActivity : AppCompatActivity() {
         if (view is EditText) view.clearFocus()
         if (view != null) imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SEARCH_INPUT, binding.searchbar.text.toString())
+        outState.putInt(CURSOR_POSITION, binding.searchbar.selectionStart)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        binding.searchbar.setText(savedInstanceState.getString(SEARCH_INPUT, userInput))
+        binding.searchbar.setSelection(savedInstanceState.getInt(CURSOR_POSITION, cursorPosition))
+    }
+
+    private var userInput: String = ""
+    private var cursorPosition: Int = 0
+
+    companion object {
+        const val SEARCH_INPUT = "SEARCH_INPUT"
+        const val CURSOR_POSITION = "CURSOR_POSITION"
+    }
+
 }
