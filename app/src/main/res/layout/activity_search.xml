@@ -16,7 +16,7 @@
         app:title="@string/search" />
 
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height">
 
@@ -26,6 +26,12 @@
             android:hint="@string/searchbar_hint"
             tools:ignore="Autofill" />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/clear_button"
+            style="@style/SearchBarClearBTN"
+            android:contentDescription="@string/searchbar_clear"
+            android:src="@drawable/ic_clear" />
+
+    </FrameLayout>
 
 </LinearLayout>

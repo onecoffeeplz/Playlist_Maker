@@ -13,4 +13,5 @@
     <string name="ya_android_course">https://practicum.yandex.ru/android-developer/</string>
     <string name="ya_license">https://yandex.ru/legal/practicum_offer/</string>
     <string name="searchbar_hint">Поиск</string>
+    <string name="searchbar_clear">Очистить поисковый запрос</string>
 </resources>
