@@ -17,6 +17,8 @@ class SearchActivity : AppCompatActivity() {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivitySearchBinding must not be null!")
 
+    private var userInput: String = ""
+    private var cursorPosition: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +42,7 @@ class SearchActivity : AppCompatActivity() {
                 if (s.isNullOrEmpty()) {
                     binding.clearButton.visibility = View.GONE
                 } else {
-                    val input = s.toString()
+                    userInput = s.toString()
                     binding.clearButton.visibility = View.VISIBLE
                 }
             }
@@ -60,7 +62,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_INPUT, binding.searchbar.text.toString())
+        outState.putString(SEARCH_INPUT, userInput)
         outState.putInt(CURSOR_POSITION, binding.searchbar.selectionStart)
     }
 
@@ -69,9 +71,6 @@ class SearchActivity : AppCompatActivity() {
         binding.searchbar.setText(savedInstanceState.getString(SEARCH_INPUT, userInput))
         binding.searchbar.setSelection(savedInstanceState.getInt(CURSOR_POSITION, cursorPosition))
     }
-
-    private var userInput: String = ""
-    private var cursorPosition: Int = 0
 
     companion object {
         const val SEARCH_INPUT = "SEARCH_INPUT"
