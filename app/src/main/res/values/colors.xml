@@ -6,6 +6,7 @@
     <color name="icon">#AEAFB4</color>
     <color name="search_icon">#AEAFB4</color>
     <color name="icon_main">#1A1B22</color>
+    <color name="icon_navigation">#000000</color>
     <color name="settings_text">#000000</color>
     <color name="settings_background">#FFFFFF</color>
     <color name="media_background">#FFFFFF</color>
