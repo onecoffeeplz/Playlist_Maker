@@ -8,15 +8,53 @@
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textColor">@color/settings_text</item>
         <item name="android:textSize">@dimen/settings_text</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
     </style>
 
-    <style name="MainTextButton" parent="Widget.Material3.Button.TextButton">
+    <style name="MainTextButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginHorizontal">@dimen/padding</item>
+        <item name="android:layout_marginBottom">@dimen/padding_8</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">@dimen/button_text</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/icon_padding</item>
+        <item name="iconTint">@color/black</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <style name="SearchBarET">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/searchbar_height</item>
+        <item name="android:background">@drawable/rounded_edittext_background</item>
+        <item name="android:layout_marginHorizontal">@dimen/padding</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:drawableStart">@drawable/ic_searchbar</item>
+        <item name="android:drawablePadding">@dimen/icon_padding</item>
+        <item name="android:paddingHorizontal">@dimen/padding</item>
+        <item name="android:textColorHint">@color/search_icon</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textCursorDrawable">@drawable/colorized_cursor</item>
+    </style>
+
+    <style name="SearchBarClearBTN">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:padding">@dimen/padding</item>
+        <item name="android:layout_marginEnd">@dimen/padding</item>
+        <item name="android:visibility">gone</item>
     </style>
 
 </resources>
