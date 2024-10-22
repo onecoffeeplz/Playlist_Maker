@@ -3,7 +3,7 @@
 
     <style name="SettingsTextView">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:padding">@dimen/padding</item>
+        <item name="android:padding">@dimen/padding_16</item>
         <item name="android:layout_height">@dimen/settings_menu_height</item>
         <item name="android:gravity">start|center_vertical</item>
         <item name="android:textColor">@color/settings_text</item>
@@ -16,7 +16,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_marginHorizontal">@dimen/padding</item>
+        <item name="android:layout_marginHorizontal">@dimen/padding_16</item>
         <item name="android:layout_marginBottom">@dimen/padding_8</item>
         <item name="android:backgroundTint">@color/white</item>
         <item name="android:textColor">@color/black</item>
@@ -35,11 +35,11 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/searchbar_height</item>
         <item name="android:background">@drawable/rounded_edittext_background</item>
-        <item name="android:layout_marginHorizontal">@dimen/padding</item>
+        <item name="android:layout_marginHorizontal">@dimen/padding_16</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:drawableStart">@drawable/ic_searchbar</item>
         <item name="android:drawablePadding">@dimen/icon_padding</item>
-        <item name="android:paddingHorizontal">@dimen/padding</item>
+        <item name="android:paddingHorizontal">@dimen/padding_16</item>
         <item name="android:textColorHint">@color/search_icon</item>
         <item name="android:inputType">text</item>
         <item name="android:maxLines">1</item>
@@ -52,8 +52,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_gravity">end</item>
-        <item name="android:padding">@dimen/padding</item>
-        <item name="android:layout_marginEnd">@dimen/padding</item>
+        <item name="android:padding">@dimen/padding_16</item>
+        <item name="android:layout_marginEnd">@dimen/padding_16</item>
         <item name="android:visibility">gone</item>
     </style>
 
