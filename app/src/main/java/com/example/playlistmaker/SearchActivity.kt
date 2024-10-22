@@ -8,6 +8,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 
 class SearchActivity : AppCompatActivity() {
@@ -51,6 +52,10 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchbar.addTextChangedListener(textWatcher)
+
+        val trackList: List<Track> = MockData.tracks
+        binding.rvTracks.layoutManager = LinearLayoutManager(this)
+        binding.rvTracks.adapter = TrackAdapter(trackList)
     }
 
     private fun hideKeyboardAndCursor() {
