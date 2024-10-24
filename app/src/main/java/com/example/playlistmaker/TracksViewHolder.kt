@@ -1,5 +1,7 @@
 package com.example.playlistmaker
 
+import android.content.Context
+import android.util.TypedValue
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -16,8 +18,16 @@ class TracksViewHolder(private val binding: TrackItemBinding) :
             Glide.with(albumCover.context)
                 .load(item.artworkUrl100)
                 .placeholder(R.drawable.ic_placeholder)
-                .transform(RoundedCorners(2))
+                .transform(RoundedCorners(dpToPx(2f, albumCover.context)))
                 .into(albumCover)
         }
+    }
+
+    private fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        ).toInt()
     }
 }
