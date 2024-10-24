@@ -14,4 +14,6 @@
     <string name="ya_license">https://yandex.ru/legal/practicum_offer/</string>
     <string name="searchbar_hint">Поиск</string>
     <string name="searchbar_clear">Очистить поисковый запрос</string>
+    <string name="track_details">Информация о треке</string>
+    <string name="album_cover_image">Изображение обложки альбома</string>
 </resources>
