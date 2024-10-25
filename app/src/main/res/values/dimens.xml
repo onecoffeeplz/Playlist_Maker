@@ -14,7 +14,7 @@
     <dimen name="icon_padding">8dp</dimen>
     <dimen name="button_text">22sp</dimen>
     <dimen name="settings_text">16sp</dimen>
-    <dimen name="search_result_first_line_text">16sp</dimen>
-    <dimen name="search_result_second_line_text">11sp</dimen>
+    <dimen name="search_result_track_name_text">16sp</dimen>
+    <dimen name="search_result_artist_text">11sp</dimen>
     <dimen name="album_cover">45dp</dimen>
 </resources>

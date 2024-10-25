@@ -57,18 +57,18 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <style name="SearchResultFirstLineTV">
+    <style name="SearchResultTrackName">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">@color/settings_text</item>
         <item name="android:textFontWeight">400</item>
-        <item name="android:textSize">@dimen/search_result_first_line_text</item>
+        <item name="android:textSize">@dimen/search_result_track_name_text</item>
     </style>
 
-    <style name="SearchResultSecondLineTV">
+    <style name="SearchResultArtist">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">@color/icon</item>
         <item name="android:textFontWeight">400</item>
-        <item name="android:textSize">@dimen/search_result_second_line_text</item>
+        <item name="android:textSize">@dimen/search_result_artist_text</item>
     </style>
 
 </resources>
