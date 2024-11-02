@@ -25,6 +25,8 @@
             android:id="@+id/searchbar"
             style="@style/SearchBarET"
             android:hint="@string/searchbar_hint"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             tools:ignore="Autofill" />
 
         <ImageView
