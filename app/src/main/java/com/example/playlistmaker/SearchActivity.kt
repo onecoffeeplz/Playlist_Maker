@@ -5,11 +5,17 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
@@ -20,6 +26,15 @@ class SearchActivity : AppCompatActivity() {
 
     private var userInput: String = ""
     private var cursorPosition: Int = 0
+
+    private val iTunesBaseUrl = "https://itunes.apple.com"
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(iTunesBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    private val iTunesService = retrofit.create(ITunesAPI::class.java)
+    private val trackList = ArrayList<Track>()
+    private val adapter = TrackAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +47,8 @@ class SearchActivity : AppCompatActivity() {
 
         binding.clearButton.setOnClickListener {
             binding.searchbar.text.clear()
+            trackList.clear()
+            adapter.notifyDataSetChanged()
             hideKeyboardAndCursor()
         }
 
@@ -53,9 +70,45 @@ class SearchActivity : AppCompatActivity() {
 
         binding.searchbar.addTextChangedListener(textWatcher)
 
-        val trackList: List<Track> = MockData.tracks
+        adapter.trackList = trackList
+
         binding.rvTracks.layoutManager = LinearLayoutManager(this)
-        binding.rvTracks.adapter = TrackAdapter(trackList)
+        binding.rvTracks.adapter = adapter
+
+        binding.searchbar.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (userInput.isNotEmpty()) {
+                    iTunesService.search(userInput).enqueue(object : Callback<TracksResponse> {
+                        override fun onResponse(
+                            call: Call<TracksResponse>,
+                            response: Response<TracksResponse>
+                        ) {
+                            binding.searchNetworkError.visibility = View.GONE
+                            binding.searchNothingFound.visibility = View.GONE
+                            hideKeyboardAndCursor()
+                            if (response.code() == 200) {
+                                trackList.clear()
+                                if (response.body()?.results?.isNotEmpty() == true) {
+                                    trackList.addAll(response.body()?.results!!)
+                                    adapter.notifyDataSetChanged()
+                                }
+                                if (trackList.isEmpty()) {
+                                    binding.searchNothingFound.visibility = View.VISIBLE
+                                }
+                            } else {
+                                binding.searchNetworkError.visibility = View.VISIBLE
+                            }
+                        }
+
+                        override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                            hideKeyboardAndCursor()
+                            binding.searchNetworkError.visibility = View.VISIBLE
+                        }
+                    })
+                }
+            }
+            return@setOnEditorActionListener true
+        }
     }
 
     private fun hideKeyboardAndCursor() {
