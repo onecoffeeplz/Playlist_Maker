@@ -9,11 +9,16 @@
     <dimen name="padding_6">6dp</dimen>
     <dimen name="padding_8">8dp</dimen>
     <dimen name="padding_12">12dp</dimen>
+    <dimen name="padding_24">24dp</dimen>
+    <dimen name="padding_98">98dp</dimen>
+    <dimen name="padding_136">136dp</dimen>
     <dimen name="button_corner_radius">16dp</dimen>
     <dimen name="et_corner_radius">8dp</dimen>
     <dimen name="icon_padding">8dp</dimen>
     <dimen name="button_text">22sp</dimen>
     <dimen name="settings_text">16sp</dimen>
+    <dimen name="search_additional_info_text">19sp</dimen>
+    <dimen name="search_reload_button_text">14sp</dimen>
     <dimen name="search_result_track_name_text">16sp</dimen>
     <dimen name="search_result_artist_text">11sp</dimen>
     <dimen name="album_cover">45dp</dimen>

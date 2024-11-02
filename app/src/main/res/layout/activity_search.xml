@@ -37,6 +37,53 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/search_nothing_found"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/padding_98"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/nothing_found"
+            android:src="@drawable/ic_nothing_found" />
+
+        <TextView
+            style="@style/SearchAdditionalInfo"
+            android:paddingTop="@dimen/padding_136"
+            android:text="@string/nothing_found" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/search_network_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/padding_98"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/network_error"
+            android:src="@drawable/ic_network_error" />
+
+        <TextView
+            style="@style/SearchAdditionalInfo"
+            android:paddingTop="@dimen/padding_136"
+            android:text="@string/network_error" />
+
+        <Button
+            style="@style/SearchReloadButton"
+            android:layout_marginTop="240dp"
+            android:text="@string/reload" />
+
+    </FrameLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tracks"
         android:layout_width="match_parent"

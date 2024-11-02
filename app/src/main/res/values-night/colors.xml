@@ -7,6 +7,7 @@
     <color name="search_icon">#000000</color>
     <color name="icon_main">#000000</color>
     <color name="icon_navigation">#FFFFFF</color>
+    <color name="icon_search">#FFFFFF</color>
     <color name="settings_text">#FFFFFF</color>
     <color name="settings_background">#1A1B22</color>
     <color name="media_background">#1A1B22</color>
