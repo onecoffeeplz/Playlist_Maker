@@ -75,37 +75,12 @@ class SearchActivity : AppCompatActivity() {
         binding.rvTracks.layoutManager = LinearLayoutManager(this)
         binding.rvTracks.adapter = adapter
 
+        binding.reloadButton.setOnClickListener {
+            doSearch(userInput)
+        }
         binding.searchbar.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                if (userInput.isNotEmpty()) {
-                    iTunesService.search(userInput).enqueue(object : Callback<TracksResponse> {
-                        override fun onResponse(
-                            call: Call<TracksResponse>,
-                            response: Response<TracksResponse>
-                        ) {
-                            binding.searchNetworkError.visibility = View.GONE
-                            binding.searchNothingFound.visibility = View.GONE
-                            hideKeyboardAndCursor()
-                            if (response.code() == 200) {
-                                trackList.clear()
-                                if (response.body()?.results?.isNotEmpty() == true) {
-                                    trackList.addAll(response.body()?.results!!)
-                                    adapter.notifyDataSetChanged()
-                                }
-                                if (trackList.isEmpty()) {
-                                    binding.searchNothingFound.visibility = View.VISIBLE
-                                }
-                            } else {
-                                binding.searchNetworkError.visibility = View.VISIBLE
-                            }
-                        }
-
-                        override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                            hideKeyboardAndCursor()
-                            binding.searchNetworkError.visibility = View.VISIBLE
-                        }
-                    })
-                }
+                doSearch(userInput)
             }
             return@setOnEditorActionListener true
         }
@@ -116,6 +91,38 @@ class SearchActivity : AppCompatActivity() {
         val view: View? = currentFocus
         if (view is EditText) view.clearFocus()
         if (view != null) imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun doSearch(userInput: String) {
+        if (userInput.isNotEmpty()) {
+            iTunesService.search(userInput).enqueue(object : Callback<TracksResponse> {
+                override fun onResponse(
+                    call: Call<TracksResponse>,
+                    response: Response<TracksResponse>
+                ) {
+                    binding.searchNetworkError.visibility = View.GONE
+                    binding.searchNothingFound.visibility = View.GONE
+                    hideKeyboardAndCursor()
+                    if (response.code() == 200) {
+                        trackList.clear()
+                        if (response.body()?.results?.isNotEmpty() == true) {
+                            trackList.addAll(response.body()?.results!!)
+                            adapter.notifyDataSetChanged()
+                        }
+                        if (trackList.isEmpty()) {
+                            binding.searchNothingFound.visibility = View.VISIBLE
+                        }
+                    } else {
+                        binding.searchNetworkError.visibility = View.VISIBLE
+                    }
+                }
+
+                override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                    hideKeyboardAndCursor()
+                    binding.searchNetworkError.visibility = View.VISIBLE
+                }
+            })
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
