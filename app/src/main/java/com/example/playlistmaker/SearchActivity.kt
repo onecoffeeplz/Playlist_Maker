@@ -49,6 +49,8 @@ class SearchActivity : AppCompatActivity() {
             binding.searchbar.text.clear()
             trackList.clear()
             adapter.notifyDataSetChanged()
+            binding.searchNetworkError.visibility = View.GONE
+            binding.searchNothingFound.visibility = View.GONE
             hideKeyboardAndCursor()
         }
 
@@ -111,14 +113,17 @@ class SearchActivity : AppCompatActivity() {
                         }
                         if (trackList.isEmpty()) {
                             binding.searchNothingFound.visibility = View.VISIBLE
+                            binding.searchNetworkError.visibility = View.GONE
                         }
                     } else {
+                        binding.searchNothingFound.visibility = View.GONE
                         binding.searchNetworkError.visibility = View.VISIBLE
                     }
                 }
 
                 override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
                     hideKeyboardAndCursor()
+                    binding.searchNothingFound.visibility = View.GONE
                     binding.searchNetworkError.visibility = View.VISIBLE
                 }
             })
