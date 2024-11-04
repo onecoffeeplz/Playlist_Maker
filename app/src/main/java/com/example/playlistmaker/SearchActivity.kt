@@ -14,8 +14,6 @@ import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
@@ -27,12 +25,6 @@ class SearchActivity : AppCompatActivity() {
     private var userInput: String = ""
     private var cursorPosition: Int = 0
 
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val iTunesService = retrofit.create(ITunesAPI::class.java)
     private val trackList = ArrayList<Track>()
     private val adapter = TrackAdapter()
 
@@ -97,36 +89,37 @@ class SearchActivity : AppCompatActivity() {
 
     private fun doSearch(userInput: String) {
         if (userInput.isNotEmpty()) {
-            iTunesService.search(userInput).enqueue(object : Callback<TracksResponse> {
-                override fun onResponse(
-                    call: Call<TracksResponse>,
-                    response: Response<TracksResponse>
-                ) {
-                    binding.searchNetworkError.visibility = View.GONE
-                    binding.searchNothingFound.visibility = View.GONE
-                    hideKeyboardAndCursor()
-                    if (response.code() == 200) {
-                        trackList.clear()
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            trackList.addAll(response.body()?.results!!)
-                            adapter.notifyDataSetChanged()
+            RetrofitClient.iTunesService.search(userInput)
+                .enqueue(object : Callback<TracksResponse> {
+                    override fun onResponse(
+                        call: Call<TracksResponse>,
+                        response: Response<TracksResponse>
+                    ) {
+                        binding.searchNetworkError.visibility = View.GONE
+                        binding.searchNothingFound.visibility = View.GONE
+                        hideKeyboardAndCursor()
+                        if (response.code() == 200) {
+                            trackList.clear()
+                            if (response.body()?.results?.isNotEmpty() == true) {
+                                trackList.addAll(response.body()?.results!!)
+                                adapter.notifyDataSetChanged()
+                            }
+                            if (trackList.isEmpty()) {
+                                binding.searchNothingFound.visibility = View.VISIBLE
+                                binding.searchNetworkError.visibility = View.GONE
+                            }
+                        } else {
+                            binding.searchNothingFound.visibility = View.GONE
+                            binding.searchNetworkError.visibility = View.VISIBLE
                         }
-                        if (trackList.isEmpty()) {
-                            binding.searchNothingFound.visibility = View.VISIBLE
-                            binding.searchNetworkError.visibility = View.GONE
-                        }
-                    } else {
+                    }
+
+                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                        hideKeyboardAndCursor()
                         binding.searchNothingFound.visibility = View.GONE
                         binding.searchNetworkError.visibility = View.VISIBLE
                     }
-                }
-
-                override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                    hideKeyboardAndCursor()
-                    binding.searchNothingFound.visibility = View.GONE
-                    binding.searchNetworkError.visibility = View.VISIBLE
-                }
-            })
+                })
         }
     }
 
