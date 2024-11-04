@@ -16,4 +16,7 @@
     <string name="searchbar_clear">Очистить поисковый запрос</string>
     <string name="track_details">Информация о треке</string>
     <string name="album_cover_image">Изображение обложки альбома</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="network_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="reload">Обновить</string>
 </resources>

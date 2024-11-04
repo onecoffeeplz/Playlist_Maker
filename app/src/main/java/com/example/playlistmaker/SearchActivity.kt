@@ -5,11 +5,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
@@ -20,6 +24,9 @@ class SearchActivity : AppCompatActivity() {
 
     private var userInput: String = ""
     private var cursorPosition: Int = 0
+
+    private val trackList = ArrayList<Track>()
+    private val adapter = TrackAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +39,10 @@ class SearchActivity : AppCompatActivity() {
 
         binding.clearButton.setOnClickListener {
             binding.searchbar.text.clear()
+            trackList.clear()
+            adapter.notifyDataSetChanged()
+            binding.searchNetworkError.visibility = View.GONE
+            binding.searchNothingFound.visibility = View.GONE
             hideKeyboardAndCursor()
         }
 
@@ -53,9 +64,20 @@ class SearchActivity : AppCompatActivity() {
 
         binding.searchbar.addTextChangedListener(textWatcher)
 
-        val trackList: List<Track> = MockData.tracks
+        adapter.trackList = trackList
+
         binding.rvTracks.layoutManager = LinearLayoutManager(this)
-        binding.rvTracks.adapter = TrackAdapter(trackList)
+        binding.rvTracks.adapter = adapter
+
+        binding.reloadButton.setOnClickListener {
+            doSearch(userInput)
+        }
+        binding.searchbar.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                doSearch(userInput)
+            }
+            return@setOnEditorActionListener true
+        }
     }
 
     private fun hideKeyboardAndCursor() {
@@ -63,6 +85,42 @@ class SearchActivity : AppCompatActivity() {
         val view: View? = currentFocus
         if (view is EditText) view.clearFocus()
         if (view != null) imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun doSearch(userInput: String) {
+        if (userInput.isNotEmpty()) {
+            RetrofitClient.iTunesService.search(userInput)
+                .enqueue(object : Callback<TracksResponse> {
+                    override fun onResponse(
+                        call: Call<TracksResponse>,
+                        response: Response<TracksResponse>
+                    ) {
+                        binding.searchNetworkError.visibility = View.GONE
+                        binding.searchNothingFound.visibility = View.GONE
+                        hideKeyboardAndCursor()
+                        if (response.code() == 200) {
+                            trackList.clear()
+                            if (response.body()?.results?.isNotEmpty() == true) {
+                                trackList.addAll(response.body()?.results!!)
+                                adapter.notifyDataSetChanged()
+                            }
+                            if (trackList.isEmpty()) {
+                                binding.searchNothingFound.visibility = View.VISIBLE
+                                binding.searchNetworkError.visibility = View.GONE
+                            }
+                        } else {
+                            binding.searchNothingFound.visibility = View.GONE
+                            binding.searchNetworkError.visibility = View.VISIBLE
+                        }
+                    }
+
+                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                        hideKeyboardAndCursor()
+                        binding.searchNothingFound.visibility = View.GONE
+                        binding.searchNetworkError.visibility = View.VISIBLE
+                    }
+                })
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
