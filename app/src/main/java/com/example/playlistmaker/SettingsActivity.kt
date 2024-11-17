@@ -21,6 +21,10 @@ class SettingsActivity : AppCompatActivity() {
         binding.settingsToolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        
+        binding.settingsTheme.setOnCheckedChangeListener { _, isChecked ->
+            (applicationContext as App).switchTheme(isChecked)
+        }
 
         binding.settingsShare.setOnClickListener {
             val shareThisApp = Intent(Intent.ACTION_SEND)
