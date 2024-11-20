@@ -18,7 +18,9 @@
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/settings_theme"
         style="@style/SettingsTextView"
-        android:text="@string/dark_mode" />
+        android:text="@string/dark_mode"
+        app:thumbTint="@color/switch_thumb_color"
+        app:trackTint="@color/switch_track_color" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/settings_share"
