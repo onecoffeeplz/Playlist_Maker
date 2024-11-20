@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
 
+const val PLAYLIST_MAKER_PREFERENCES = "pm_preferences"
+const val DARK_THEME_ENABLED = "dark_theme_enabled"
+
 class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null

@@ -21,9 +21,12 @@ class SettingsActivity : AppCompatActivity() {
         binding.settingsToolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-        
-        binding.settingsTheme.setOnCheckedChangeListener { _, isChecked ->
-            (applicationContext as App).switchTheme(isChecked)
+
+        with (binding.settingsTheme) {
+            isChecked = (applicationContext as App).getCurrentTheme()
+            setOnCheckedChangeListener { _, isChecked ->
+                (applicationContext as App).switchTheme(isChecked)
+            }
         }
 
         binding.settingsShare.setOnClickListener {
