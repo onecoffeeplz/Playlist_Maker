@@ -79,7 +79,7 @@
 
         <Button
             android:id="@+id/reload_button"
-            style="@style/SearchReloadButton"
+            style="@style/SearchButton"
             android:layout_marginTop="240dp"
             android:text="@string/reload" />
 
@@ -90,5 +90,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/padding_16" />
+
+    <LinearLayout
+        android:id="@+id/search_history"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/padding_24"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/SearchHistory"
+            android:text="@string/show_history" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_history_tracks"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="@dimen/padding_8" />
+
+        <Button
+            android:id="@+id/clear_history_button"
+            style="@style/SearchButton"
+            android:layout_marginVertical="@dimen/padding_24"
+            android:text="@string/clear_history" />
+
+    </LinearLayout>
 
 </LinearLayout>

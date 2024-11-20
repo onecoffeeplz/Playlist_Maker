@@ -84,12 +84,24 @@
         <item name="android:paddingHorizontal">@dimen/padding_24</item>
     </style>
 
-    <style name="SearchReloadButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+    <style name="SearchHistory">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/search_history_height</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textColor">@color/icon_search</item>
+        <item name="android:textSize">@dimen/search_additional_info_text</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="SearchButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:backgroundTint">@color/icon_search</item>
         <item name="android:textColor">@color/search_background</item>
-        <item name="android:textSize">@dimen/search_reload_button_text</item>
+        <item name="android:textSize">@dimen/search_button_text</item>
         <item name="cornerRadius">54dp</item>
         <item name="textAllCaps">false</item>
         <item name="android:letterSpacing">0</item>
