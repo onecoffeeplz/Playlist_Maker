@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -41,7 +40,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
         sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         SearchHistory.init(sharedPreferences)
-        searchHistoryTrackList = SearchHistory.getSearchHistory()// as ArrayList<Track>
+        searchHistoryTrackList = SearchHistory.getSearchHistory()
         searchAdapter = TrackAdapter(java.util.ArrayList(searchHistoryTrackList))
 
         binding.searchbar.setOnFocusChangeListener { _, hasFocus ->
@@ -79,6 +78,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
                         if (binding.searchbar.hasFocus() && searchHistoryTrackList.isNotEmpty()) View.VISIBLE else View.GONE
                 } else {
                     userInput = s.toString()
+                    binding.searchHistory.visibility = View.GONE
                     binding.clearButton.visibility = View.VISIBLE
                 }
             }
@@ -167,10 +167,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     override fun onTrackClick(track: Track) {
         SearchHistory.addTrack(track)
         searchHistoryTrackList = SearchHistory.getSearchHistory()
-        Log.d("dbg", searchHistoryTrackList.toString())
         searchAdapter.trackList.clear()
         searchAdapter.trackList.addAll(java.util.ArrayList(searchHistoryTrackList))
-        Log.d("dbg", searchAdapter.trackList.toString())
         searchAdapter.notifyDataSetChanged()
     }
 
