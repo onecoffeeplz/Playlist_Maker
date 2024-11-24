@@ -85,12 +85,6 @@
 
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_tracks"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="@dimen/padding_16" />
-
     <LinearLayout
         android:id="@+id/search_history"
         android:layout_width="match_parent"
@@ -117,5 +111,11 @@
             android:text="@string/clear_history" />
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_tracks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/padding_16" />
 
 </LinearLayout>
