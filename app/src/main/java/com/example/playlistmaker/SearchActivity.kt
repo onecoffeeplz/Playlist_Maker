@@ -43,9 +43,12 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         searchHistoryTrackList = SearchHistory.getSearchHistory()
         searchAdapter = TrackAdapter(java.util.ArrayList(searchHistoryTrackList))
 
-        binding.searchbar.setOnFocusChangeListener { _, hasFocus ->
-            binding.searchHistory.visibility =
-                if (hasFocus && searchHistoryTrackList.isNotEmpty() && binding.searchbar.text.isEmpty()) View.VISIBLE else View.GONE
+        with (binding.searchbar) {
+            postDelayed({setKeyboardAndCursor(this)}, 100)
+            setOnFocusChangeListener { _, hasFocus ->
+                binding.searchHistory.visibility =
+                    if (hasFocus && searchHistoryTrackList.isNotEmpty() && binding.searchbar.text.isEmpty()) View.VISIBLE else View.GONE
+            }
         }
 
         binding.searchToolbar.setNavigationOnClickListener {
@@ -58,13 +61,14 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
             trackAdapter.notifyDataSetChanged()
             binding.searchNetworkError.visibility = View.GONE
             binding.searchNothingFound.visibility = View.GONE
-            hideKeyboardAndCursor()
+            setKeyboardAndCursor(binding.searchbar)
         }
 
         binding.clearHistoryButton.setOnClickListener {
             SearchHistory.clearSearchHistory()
             searchAdapter.notifyDataSetChanged()
             binding.searchHistory.visibility = View.GONE
+            setKeyboardAndCursor(binding.searchbar)
         }
 
         val textWatcher = object : TextWatcher {
@@ -114,6 +118,12 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         val view: View? = currentFocus
         if (view is EditText) view.clearFocus()
         if (view != null) imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun setKeyboardAndCursor(view: View) {
+        view.requestFocus()
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun doSearch(userInput: String) {
