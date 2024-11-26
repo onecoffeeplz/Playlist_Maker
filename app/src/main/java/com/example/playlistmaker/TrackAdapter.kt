@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.TrackItemBinding
 
 class TrackAdapter(
-    var trackList: ArrayList<Track>,
+    var trackList: MutableList<Track>,
     private val onTrackClickListener: OnTrackClickListener? = null
 ) : RecyclerView.Adapter<TracksViewHolder>() {
 

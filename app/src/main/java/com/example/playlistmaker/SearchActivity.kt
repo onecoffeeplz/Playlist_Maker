@@ -29,8 +29,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var searchHistory: SearchHistory
 
-    private val trackList = ArrayList<Track>()
-    private lateinit var searchHistoryTrackList: List<Track>
+    private val trackList: MutableList<Track> = mutableListOf()
+    private lateinit var searchHistoryTrackList: MutableList<Track>
     private val trackAdapter = TrackAdapter(trackList, this)
     private var searchAdapter = TrackAdapter(trackList)
 
@@ -42,7 +42,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
         searchHistoryTrackList = searchHistory.getSearchHistory()
-        searchAdapter = TrackAdapter(java.util.ArrayList(searchHistoryTrackList))
+        searchAdapter = TrackAdapter(searchHistoryTrackList)
 
         with (binding.searchbar) {
             postDelayed({setKeyboardAndCursor(this)}, 100)
@@ -179,7 +179,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         searchHistory.addTrack(track)
         searchHistoryTrackList = searchHistory.getSearchHistory()
         searchAdapter.trackList.clear()
-        searchAdapter.trackList.addAll(java.util.ArrayList(searchHistoryTrackList))
+        searchAdapter.trackList.addAll(searchHistoryTrackList)
         searchAdapter.notifyDataSetChanged()
     }
 
