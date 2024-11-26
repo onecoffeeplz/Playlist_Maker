@@ -27,6 +27,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     private var cursorPosition: Int = 0
 
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var searchHistory: SearchHistory
 
     private val trackList = ArrayList<Track>()
     private lateinit var searchHistoryTrackList: List<Track>
@@ -39,8 +40,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         setContentView(binding.root)
 
         sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        SearchHistory.init(sharedPreferences)
-        searchHistoryTrackList = SearchHistory.getSearchHistory()
+        searchHistory = SearchHistory(sharedPreferences)
+        searchHistoryTrackList = searchHistory.getSearchHistory()
         searchAdapter = TrackAdapter(java.util.ArrayList(searchHistoryTrackList))
 
         with (binding.searchbar) {
@@ -65,7 +66,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         }
 
         binding.clearHistoryButton.setOnClickListener {
-            SearchHistory.clearSearchHistory()
+            searchHistory.clearSearchHistory()
             searchAdapter.notifyDataSetChanged()
             binding.searchHistory.visibility = View.GONE
             setKeyboardAndCursor(binding.searchbar)
@@ -175,8 +176,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     }
 
     override fun onTrackClick(track: Track) {
-        SearchHistory.addTrack(track)
-        searchHistoryTrackList = SearchHistory.getSearchHistory()
+        searchHistory.addTrack(track)
+        searchHistoryTrackList = searchHistory.getSearchHistory()
         searchAdapter.trackList.clear()
         searchAdapter.trackList.addAll(java.util.ArrayList(searchHistoryTrackList))
         searchAdapter.notifyDataSetChanged()

@@ -6,14 +6,9 @@ import com.google.gson.Gson
 const val MAX_SEARCH_HISTORY = 10
 const val SEARCH_HISTORY = "search_history"
 
-object SearchHistory {
+class SearchHistory(private var sharedPreferences: SharedPreferences) {
 
     private val gson = Gson()
-    private lateinit var sharedPreferences: SharedPreferences
-
-    fun init(sharedPreferences: SharedPreferences) {
-        this.sharedPreferences = sharedPreferences
-    }
 
     fun getSearchHistory(): List<Track> {
         val json = sharedPreferences.getString(SEARCH_HISTORY, null) ?: return emptyList()
