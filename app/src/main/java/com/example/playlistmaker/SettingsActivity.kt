@@ -22,6 +22,13 @@ class SettingsActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        with (binding.settingsTheme) {
+            isChecked = (applicationContext as App).getCurrentTheme()
+            setOnCheckedChangeListener { _, isChecked ->
+                (applicationContext as App).switchTheme(isChecked)
+            }
+        }
+
         binding.settingsShare.setOnClickListener {
             val shareThisApp = Intent(Intent.ACTION_SEND)
             shareThisApp.setType("text/plain")
