@@ -110,4 +110,39 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
+    <style name="PlayerTrackName">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/player_track_name_text</item>
+        <item name="android:textColor">@color/player_text_color</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="PlayerArtistName">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/player_artist_name_text</item>
+        <item name="android:textColor">@color/player_text_color</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="PlayerDetailsKey">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">@dimen/player_details_text</item>
+        <item name="android:textColor">@color/player_details_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/height_32</item>
+    </style>
+
+    <style name="PlayerDetailsValue">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/player_details_text</item>
+        <item name="android:textColor">@color/player_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 </resources>
