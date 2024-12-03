@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -12,6 +13,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -176,11 +178,16 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     }
 
     override fun onTrackClick(track: Track) {
-        searchHistory.addTrack(track)
-        searchHistoryTrackList = searchHistory.getSearchHistory()
-        searchAdapter.trackList.clear()
-        searchAdapter.trackList.addAll(searchHistoryTrackList)
-        searchAdapter.notifyDataSetChanged()
+//        searchHistory.addTrack(track)
+//        searchHistoryTrackList = searchHistory.getSearchHistory()
+//        searchAdapter.trackList.clear()
+//        searchAdapter.trackList.addAll(searchHistoryTrackList)
+//        searchAdapter.notifyDataSetChanged()
+
+        val intent = Intent(this, PlayerActivity::class.java).apply {
+            putExtra("track", Gson().toJson(track))
+        }
+        startActivity(intent)
     }
 
     companion object {
