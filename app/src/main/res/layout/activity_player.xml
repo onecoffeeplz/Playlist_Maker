@@ -124,7 +124,7 @@
             app:layout_constraintEnd_toEndOf="@id/guideline_right_24"
             app:layout_constraintStart_toStartOf="@id/guideline_left_24"
             app:layout_constraintTop_toBottomOf="@id/play_btn"
-            tools:text="0:30" />
+            android:text="0:00" />
 
         <TextView
             android:id="@+id/duration_tv"
@@ -151,10 +151,10 @@
         <TextView
             android:id="@+id/album"
             style="@style/PlayerDetailsValue"
-            android:ellipsize="end"
             app:layout_constrainedWidth="true"
             app:layout_constraintBaseline_toBaselineOf="@+id/album_tv"
             app:layout_constraintEnd_toEndOf="@id/guideline_right_16"
+            app:layout_constraintStart_toEndOf="@id/details_barrier"
             tools:text="Yesterday (Remastered 2009)" />
 
         <androidx.constraintlayout.widget.Group
@@ -205,6 +205,13 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/country_tv"
             app:layout_constraintEnd_toEndOf="@id/guideline_right_16"
             tools:text="Великобритания" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/details_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="duration_tv, album_tv, year_tv, genre_tv, country_tv"
+                app:barrierDirection="end" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
