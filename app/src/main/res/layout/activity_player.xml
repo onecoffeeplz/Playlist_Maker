@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/padding_16"
+    android:paddingBottom="@dimen/padding_16"
     android:background="@color/player_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
