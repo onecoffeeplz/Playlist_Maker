@@ -69,6 +69,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
         binding.clearHistoryButton.setOnClickListener {
             searchHistory.clearSearchHistory()
+            searchHistoryTrackList.clear()
             searchAdapter.notifyDataSetChanged()
             binding.searchHistory.visibility = View.GONE
             setKeyboardAndCursor(binding.searchbar)
