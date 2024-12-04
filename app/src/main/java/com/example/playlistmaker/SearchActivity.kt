@@ -184,7 +184,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         startActivity(intent)
 
         searchHistory.addTrack(track)
-        searchHistoryTrackList.add(0, track)
+        searchHistory.checkConditionsAndAdd(track, searchHistoryTrackList)
         searchAdapter.notifyDataSetChanged()
     }
 
