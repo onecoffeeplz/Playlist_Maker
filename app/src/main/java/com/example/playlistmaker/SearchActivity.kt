@@ -34,7 +34,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     private val trackList: MutableList<Track> = mutableListOf()
     private lateinit var searchHistoryTrackList: MutableList<Track>
     private val trackAdapter = TrackAdapter(trackList, this)
-    private var searchAdapter = TrackAdapter(trackList)
+    private var searchAdapter = TrackAdapter(trackList, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
         searchHistoryTrackList = searchHistory.getSearchHistory()
-        searchAdapter = TrackAdapter(searchHistoryTrackList)
+        searchAdapter = TrackAdapter(searchHistoryTrackList, this)
 
         with (binding.searchbar) {
             postDelayed({setKeyboardAndCursor(this)}, 100)
@@ -178,16 +178,16 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     }
 
     override fun onTrackClick(track: Track) {
-//        searchHistory.addTrack(track)
-//        searchHistoryTrackList = searchHistory.getSearchHistory()
-//        searchAdapter.trackList.clear()
-//        searchAdapter.trackList.addAll(searchHistoryTrackList)
-//        searchAdapter.notifyDataSetChanged()
-
         val intent = Intent(this, PlayerActivity::class.java).apply {
             putExtra("track", Gson().toJson(track))
         }
         startActivity(intent)
+
+        searchHistory.addTrack(track)
+        searchHistoryTrackList = searchHistory.getSearchHistory()
+        searchAdapter.trackList.clear()
+        searchAdapter.trackList.addAll(searchHistoryTrackList)
+        searchAdapter.notifyDataSetChanged()
     }
 
     companion object {
