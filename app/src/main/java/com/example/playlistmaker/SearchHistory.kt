@@ -19,10 +19,14 @@ class SearchHistory(private var sharedPreferences: SharedPreferences) {
 
     fun addTrack(track: Track) {
         val savedTracks = getSearchHistory()
-        if (savedTracks.contains(track)) savedTracks.remove(track)
-        if (savedTracks.size >= MAX_SEARCH_HISTORY) savedTracks.remove(savedTracks.last())
-        savedTracks.add(0, track)
-        saveToSearchHistory(savedTracks)
+        saveToSearchHistory(checkConditionsAndAdd(track, savedTracks))
+    }
+
+    fun checkConditionsAndAdd(track: Track, tracks: MutableList<Track>) : MutableList<Track> {
+        if (tracks.contains(track)) tracks.remove(track)
+        if (tracks.size >= MAX_SEARCH_HISTORY) tracks.remove(tracks.last())
+        tracks.add(0, track)
+        return tracks
     }
 
     private fun saveToSearchHistory(tracks: MutableList<Track>) {

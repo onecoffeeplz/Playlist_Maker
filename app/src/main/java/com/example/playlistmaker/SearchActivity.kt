@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -12,6 +13,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,7 +34,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     private val trackList: MutableList<Track> = mutableListOf()
     private lateinit var searchHistoryTrackList: MutableList<Track>
     private val trackAdapter = TrackAdapter(trackList, this)
-    private var searchAdapter = TrackAdapter(trackList)
+    private var searchAdapter = TrackAdapter(trackList, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +44,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
         searchHistoryTrackList = searchHistory.getSearchHistory()
-        searchAdapter = TrackAdapter(searchHistoryTrackList)
+        searchAdapter = TrackAdapter(searchHistoryTrackList, this)
 
         with (binding.searchbar) {
             postDelayed({setKeyboardAndCursor(this)}, 100)
@@ -67,6 +69,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
         binding.clearHistoryButton.setOnClickListener {
             searchHistory.clearSearchHistory()
+            searchHistoryTrackList.clear()
             searchAdapter.notifyDataSetChanged()
             binding.searchHistory.visibility = View.GONE
             setKeyboardAndCursor(binding.searchbar)
@@ -176,10 +179,13 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     }
 
     override fun onTrackClick(track: Track) {
+        val intent = Intent(this, PlayerActivity::class.java).apply {
+            putExtra("track", Gson().toJson(track))
+        }
+        startActivity(intent)
+
         searchHistory.addTrack(track)
-        searchHistoryTrackList = searchHistory.getSearchHistory()
-        searchAdapter.trackList.clear()
-        searchAdapter.trackList.addAll(searchHistoryTrackList)
+        searchHistory.checkConditionsAndAdd(track, searchHistoryTrackList)
         searchAdapter.notifyDataSetChanged()
     }
 

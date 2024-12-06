@@ -22,6 +22,7 @@ class TracksViewHolder(private val binding: TrackItemBinding) :
                 .placeholder(R.drawable.ic_placeholder)
                 .transform(RoundedCorners(dpToPx(2f, albumCover.context)))
                 .into(albumCover)
+            artist.requestLayout()
         }
     }
 
