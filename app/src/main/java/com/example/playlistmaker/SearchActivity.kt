@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -27,6 +29,10 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
     private var userInput: String = ""
     private var cursorPosition: Int = 0
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { doSearch(userInput) }
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var searchHistory: SearchHistory
@@ -88,6 +94,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
                     userInput = s.toString()
                     binding.searchHistory.visibility = View.GONE
                     binding.clearButton.visibility = View.VISIBLE
+                    searchDebounce()
                 }
             }
 
@@ -132,6 +139,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
     private fun doSearch(userInput: String) {
         if (userInput.isNotEmpty()) {
+            binding.rvTracks.visibility = View.GONE
+            binding.progressBar.visibility = View.VISIBLE
             RetrofitClient.iTunesService.search(userInput)
                 .enqueue(object : Callback<TracksResponse> {
                     override fun onResponse(
@@ -140,10 +149,11 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
                     ) {
                         binding.searchNetworkError.visibility = View.GONE
                         binding.searchNothingFound.visibility = View.GONE
-                        hideKeyboardAndCursor()
+                        binding.progressBar.visibility = View.GONE
                         if (response.code() == 200) {
                             trackList.clear()
                             if (response.body()?.results?.isNotEmpty() == true) {
+                                binding.rvTracks.visibility = View.VISIBLE
                                 trackList.addAll(response.body()?.results!!)
                                 trackAdapter.notifyDataSetChanged()
                             }
@@ -159,6 +169,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
                     override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
                         hideKeyboardAndCursor()
+                        binding.progressBar.visibility = View.GONE
                         binding.searchNothingFound.visibility = View.GONE
                         binding.searchNetworkError.visibility = View.VISIBLE
                     }
@@ -179,18 +190,41 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     }
 
     override fun onTrackClick(track: Track) {
-        val intent = Intent(this, PlayerActivity::class.java).apply {
-            putExtra("track", Gson().toJson(track))
-        }
-        startActivity(intent)
+        if (clickDebounce()) {
+            val intent = Intent(this, PlayerActivity::class.java).apply {
+                putExtra("track", Gson().toJson(track))
+            }
+            startActivity(intent)
 
-        searchHistory.addTrack(track)
-        searchHistory.checkConditionsAndAdd(track, searchHistoryTrackList)
-        searchAdapter.notifyDataSetChanged()
+            searchHistory.addTrack(track)
+            searchHistory.checkConditionsAndAdd(track, searchHistoryTrackList)
+            searchAdapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(searchRunnable)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val currentClickState = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return currentClickState
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     companion object {
         const val SEARCH_INPUT = "SEARCH_INPUT"
         const val CURSOR_POSITION = "CURSOR_POSITION"
+        const val CLICK_DEBOUNCE_DELAY = 1_000L
+        const val SEARCH_DEBOUNCE_DELAY = 2_000L
     }
 }
