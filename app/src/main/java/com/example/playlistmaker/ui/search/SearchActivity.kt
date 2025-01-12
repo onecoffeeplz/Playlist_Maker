@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.data.network.RetrofitClient
 import com.example.playlistmaker.data.network.SearchHistory
-import com.example.playlistmaker.data.dto.TracksResponse
+import com.example.playlistmaker.data.dto.TracksSearchResponse
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.main.PLAYLIST_MAKER_PREFERENCES
@@ -148,10 +148,10 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
             binding.rvTracks.visibility = View.GONE
             binding.progressBar.visibility = View.VISIBLE
             RetrofitClient.iTunesService.search(userInput)
-                .enqueue(object : Callback<TracksResponse> {
+                .enqueue(object : Callback<TracksSearchResponse> {
                     override fun onResponse(
-                        call: Call<TracksResponse>,
-                        response: Response<TracksResponse>
+                        call: Call<TracksSearchResponse>,
+                        response: Response<TracksSearchResponse>
                     ) {
                         binding.searchNetworkError.visibility = View.GONE
                         binding.searchNothingFound.visibility = View.GONE
@@ -173,7 +173,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
                         }
                     }
 
-                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
                         hideKeyboardAndCursor()
                         binding.progressBar.visibility = View.GONE
                         binding.searchNothingFound.visibility = View.GONE
