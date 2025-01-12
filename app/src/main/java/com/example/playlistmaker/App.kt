@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.ui.main.DARK_THEME_ENABLED
+import com.example.playlistmaker.ui.main.PLAYLIST_MAKER_PREFERENCES
 
 class App : Application() {
 

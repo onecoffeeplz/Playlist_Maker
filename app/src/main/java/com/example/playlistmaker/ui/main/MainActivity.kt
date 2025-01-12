@@ -1,8 +1,11 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.main
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.playlistmaker.ui.media.MediaActivity
+import com.example.playlistmaker.ui.search.SearchActivity
+import com.example.playlistmaker.ui.settings.SettingsActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
 
 const val PLAYLIST_MAKER_PREFERENCES = "pm_preferences"
