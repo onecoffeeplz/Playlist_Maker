@@ -3,6 +3,8 @@ package com.example.playlistmaker.ui.search
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,17 +16,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.data.network.RetrofitClient
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.data.network.SearchHistory
-import com.example.playlistmaker.data.dto.TracksSearchResponse
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.main.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.ui.player.PlayerActivity
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
@@ -47,6 +46,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     private lateinit var searchHistoryTrackList: MutableList<Track>
     private val trackAdapter = TrackAdapter(trackList, this)
     private var searchAdapter = TrackAdapter(trackList, this)
+    private val tracksInteractor = Creator.provideTracksInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,8 +58,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         searchHistoryTrackList = searchHistory.getSearchHistory()
         searchAdapter = TrackAdapter(searchHistoryTrackList, this)
 
-        with (binding.searchbar) {
-            postDelayed({setKeyboardAndCursor(this)}, 100)
+        with(binding.searchbar) {
+            postDelayed({ setKeyboardAndCursor(this) }, 100)
             setOnFocusChangeListener { _, hasFocus ->
                 binding.searchHistory.visibility =
                     if (hasFocus && searchHistoryTrackList.isNotEmpty() && binding.searchbar.text.isEmpty()) View.VISIBLE else View.GONE
@@ -147,40 +147,42 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         if (userInput.isNotEmpty()) {
             binding.rvTracks.visibility = View.GONE
             binding.progressBar.visibility = View.VISIBLE
-            RetrofitClient.iTunesService.search(userInput)
-                .enqueue(object : Callback<TracksSearchResponse> {
-                    override fun onResponse(
-                        call: Call<TracksSearchResponse>,
-                        response: Response<TracksSearchResponse>
-                    ) {
+
+            if (!isNetworkAvailable()) {
+                hideKeyboardAndCursor()
+                binding.progressBar.visibility = View.GONE
+                binding.searchNothingFound.visibility = View.GONE
+                binding.searchNetworkError.visibility = View.VISIBLE
+                return
+            }
+
+            tracksInteractor.search(userInput, object : TracksInteractor.TracksConsumer {
+                override fun consume(foundTracks: List<Track>) {
+                    handler.post {
                         binding.searchNetworkError.visibility = View.GONE
                         binding.searchNothingFound.visibility = View.GONE
                         binding.progressBar.visibility = View.GONE
-                        if (response.code() == 200) {
-                            trackList.clear()
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                binding.rvTracks.visibility = View.VISIBLE
-                                trackList.addAll(response.body()?.results!!)
-                                trackAdapter.notifyDataSetChanged()
-                            }
-                            if (trackList.isEmpty()) {
-                                binding.searchNothingFound.visibility = View.VISIBLE
-                                binding.searchNetworkError.visibility = View.GONE
-                            }
+                        trackList.clear()
+                        if (foundTracks.isNotEmpty()) {
+                            binding.rvTracks.visibility = View.VISIBLE
+                            trackList.addAll(foundTracks)
+                            trackAdapter.notifyDataSetChanged()
                         } else {
-                            binding.searchNothingFound.visibility = View.GONE
-                            binding.searchNetworkError.visibility = View.VISIBLE
+                            binding.searchNothingFound.visibility = View.VISIBLE
+                            binding.searchNetworkError.visibility = View.GONE
                         }
                     }
-
-                    override fun onFailure(call: Call<TracksSearchResponse>, t: Throwable) {
-                        hideKeyboardAndCursor()
-                        binding.progressBar.visibility = View.GONE
-                        binding.searchNothingFound.visibility = View.GONE
-                        binding.searchNetworkError.visibility = View.VISIBLE
-                    }
-                })
+                }
+            })
         }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities =
+            connectivityManager.activeNetwork?.let { connectivityManager.getNetworkCapabilities(it) }
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -213,7 +215,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         handler.removeCallbacks(searchRunnable)
     }
 
-    private fun clickDebounce() : Boolean {
+    private fun clickDebounce(): Boolean {
         val currentClickState = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
