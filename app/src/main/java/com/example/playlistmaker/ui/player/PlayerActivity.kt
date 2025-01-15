@@ -1,7 +1,6 @@
 package com.example.playlistmaker.ui.player
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +10,7 @@ import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.domain.models.Track
@@ -25,8 +25,7 @@ class PlayerActivity : AppCompatActivity() {
             ?: throw IllegalStateException("Binding for ActivityPlayerBinding must not be null!")
 
     private lateinit var playButton: ImageButton
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
+    private var mediaPlayer = Creator.providePlayerInteractor()
     private lateinit var url: String
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var updateProgressRunnable: Runnable
@@ -65,21 +64,28 @@ class PlayerActivity : AppCompatActivity() {
                 .into(albumCover)
         }
 
-        preparePlayer()
         playButton = binding.playBtn
+
+        mediaPlayer.preparePlayer(
+            url,
+            { playButton.isEnabled = true },
+            {
+                playButton.setImageResource(R.drawable.ic_play)
+                handler.removeCallbacks(updateProgressRunnable)
+                binding.listenProgress.text = "0:00"
+            })
+
         playButton.setOnClickListener {
             playbackControl()
         }
 
         updateProgressRunnable = object : Runnable {
             override fun run() {
-                if (mediaPlayer.isPlaying) {
-                    binding.listenProgress.text = SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(mediaPlayer.currentPosition)
-                    handler.postDelayed(this, TIMER_UPDATE_TIME)
-                }
+                binding.listenProgress.text = SimpleDateFormat(
+                    "mm:ss",
+                    Locale.getDefault()
+                ).format(mediaPlayer.currentPosition())
+                handler.postDelayed(this, TIMER_UPDATE_TIME)
             }
         }
     }
@@ -92,41 +98,25 @@ class PlayerActivity : AppCompatActivity() {
         ).toInt()
     }
 
-    private fun preparePlayer() {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playButton.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            playButton.setImageResource(R.drawable.ic_play)
-            binding.listenProgress.text = "0:00"
-            playerState = STATE_PREPARED
-        }
-    }
-
     private fun startPlayer() {
-        mediaPlayer.start()
+        mediaPlayer.startPlayer()
         playButton.setImageResource(R.drawable.ic_pause)
-        playerState = STATE_PLAYING
         handler.post(updateProgressRunnable)
     }
 
     private fun pausePlayer() {
-        mediaPlayer.pause()
+        mediaPlayer.pausePlayer()
         playButton.setImageResource(R.drawable.ic_play)
-        playerState = STATE_PAUSED
         handler.removeCallbacks(updateProgressRunnable)
     }
 
     private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
+        when (mediaPlayer.playbackControl()) {
+            false -> {
                 pausePlayer()
             }
 
-            STATE_PREPARED, STATE_PAUSED -> {
+            else -> {
                 startPlayer()
             }
         }
@@ -144,10 +134,6 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
         private const val TIMER_UPDATE_TIME = 500L
     }
 
