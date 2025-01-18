@@ -24,6 +24,10 @@ class LocalRepositoryImpl(private var sharedPreferences: SharedPreferences): Loc
         sharedPreferences.edit().remove(key).apply()
     }
 
+    override fun contains(key: String): Boolean {
+        return sharedPreferences.contains(key)
+    }
+
     companion object {
         const val PLAYLIST_MAKER_PREFERENCES = "pm_preferences"
         const val DARK_THEME_ENABLED = "dark_theme_enabled"

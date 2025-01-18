@@ -4,7 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.App
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
@@ -14,6 +14,8 @@ class SettingsActivity : AppCompatActivity() {
     private val binding
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivitySettingsBinding must not be null!")
+
+    private val appThemeInteractor = Creator.provideAppThemeInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +27,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         with (binding.settingsTheme) {
-            isChecked = (applicationContext as App).getCurrentTheme()
+            isChecked = appThemeInteractor.getCurrentTheme()
             setOnCheckedChangeListener { _, isChecked ->
-                (applicationContext as App).switchTheme(isChecked)
+                appThemeInteractor.switchTheme(isChecked)
             }
         }
 

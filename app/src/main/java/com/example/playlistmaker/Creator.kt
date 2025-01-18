@@ -2,12 +2,15 @@ package com.example.playlistmaker
 
 import android.app.Application
 import android.app.Application.MODE_PRIVATE
+import com.example.playlistmaker.data.AppThemeRepositoryImpl
 import com.example.playlistmaker.data.PlayerRepositoryImpl
 import com.example.playlistmaker.data.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.TracksRepositoryImpl
 import com.example.playlistmaker.data.local.LocalRepositoryImpl
 import com.example.playlistmaker.data.local.LocalRepositoryImpl.Companion.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.data.network.RetrofitClient
+import com.example.playlistmaker.domain.api.AppThemeInteractor
+import com.example.playlistmaker.domain.api.AppThemeRepository
 import com.example.playlistmaker.domain.api.LocalRepository
 import com.example.playlistmaker.domain.api.PlayerInteractor
 import com.example.playlistmaker.domain.api.PlayerRepository
@@ -15,6 +18,7 @@ import com.example.playlistmaker.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.api.TracksRepository
+import com.example.playlistmaker.domain.impl.AppThemeInteractorImpl
 import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
@@ -35,6 +39,14 @@ object Creator {
                 MODE_PRIVATE
             )
         )
+    }
+
+    private fun getAppThemeRepository(): AppThemeRepository {
+        return AppThemeRepositoryImpl(provideLocalRepository(), application)
+    }
+
+    fun provideAppThemeInteractor(): AppThemeInteractor {
+        return AppThemeInteractorImpl(getAppThemeRepository())
     }
 
     private fun getTracksRepository(): TracksRepository {

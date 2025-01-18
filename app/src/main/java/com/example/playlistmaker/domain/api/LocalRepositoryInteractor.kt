@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.api
 
-interface LocalRepository {
+interface LocalRepositoryInteractor {
     fun getBoolean(key: String, defValue: Boolean): Boolean
     fun putBoolean(key: String, value: Boolean)
     fun getString(key: String, defValue: String?): String?
