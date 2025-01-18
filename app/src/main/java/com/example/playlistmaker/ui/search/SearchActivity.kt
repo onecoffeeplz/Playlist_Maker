@@ -2,7 +2,6 @@ package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
@@ -17,11 +16,9 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.data.network.SearchHistory
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.main.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.ui.player.PlayerActivity
 import com.google.gson.Gson
 
@@ -39,23 +36,19 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { doSearch(userInput) }
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var searchHistory: SearchHistory
-
     private val trackList: MutableList<Track> = mutableListOf()
     private lateinit var searchHistoryTrackList: MutableList<Track>
     private val trackAdapter = TrackAdapter(trackList, this)
     private var searchAdapter = TrackAdapter(trackList, this)
     private val tracksInteractor = Creator.provideTracksInteractor()
+    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPreferences)
-        searchHistoryTrackList = searchHistory.getSearchHistory()
+        searchHistoryTrackList = searchHistoryInteractor.getSearchHistory()
         searchAdapter = TrackAdapter(searchHistoryTrackList, this)
 
         with(binding.searchbar) {
@@ -80,7 +73,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         }
 
         binding.clearHistoryButton.setOnClickListener {
-            searchHistory.clearSearchHistory()
+            searchHistoryInteractor.clearSearchHistory()
             searchHistoryTrackList.clear()
             searchAdapter.notifyDataSetChanged()
             binding.searchHistory.visibility = View.GONE
@@ -204,8 +197,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
             }
             startActivity(intent)
 
-            searchHistory.addTrack(track)
-            searchHistory.checkConditionsAndAdd(track, searchHistoryTrackList)
+            searchHistoryInteractor.addTrack(track)
+            searchAdapter.trackList = searchHistoryInteractor.getSearchHistory()
             searchAdapter.notifyDataSetChanged()
         }
     }
