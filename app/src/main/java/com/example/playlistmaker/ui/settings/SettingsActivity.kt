@@ -1,11 +1,8 @@
 package com.example.playlistmaker.ui.settings
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
@@ -16,6 +13,7 @@ class SettingsActivity : AppCompatActivity() {
             ?: throw IllegalStateException("Binding for ActivitySettingsBinding must not be null!")
 
     private val appThemeInteractor = Creator.provideAppThemeInteractor()
+    private val actionHandler = Creator.provideActionHandlerInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,28 +32,15 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.settingsShare.setOnClickListener {
-            val shareThisApp = Intent(Intent.ACTION_SEND)
-            shareThisApp.setType("text/plain")
-            shareThisApp.putExtra(Intent.EXTRA_TEXT, getString(R.string.ya_android_course))
-            startActivity(shareThisApp)
+            actionHandler.shareApp()
         }
 
         binding.settingsSupport.setOnClickListener {
-            val sendMailToSupport = Intent(Intent.ACTION_SENDTO)
-            sendMailToSupport.data = Uri.parse("mailto:")
-            sendMailToSupport.putExtra(
-                Intent.EXTRA_EMAIL,
-                arrayOf(getString(R.string.support_mail))
-            )
-            sendMailToSupport.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_mail_theme))
-            sendMailToSupport.putExtra(Intent.EXTRA_TEXT, getString(R.string.support_mail_content))
-            startActivity(sendMailToSupport)
+            actionHandler.contactSupport()
         }
 
         binding.settingsLicense.setOnClickListener {
-            val showLicenseInBrowser = Intent(Intent.ACTION_VIEW)
-            showLicenseInBrowser.data = Uri.parse(getString(R.string.ya_license))
-            startActivity(showLicenseInBrowser)
+            actionHandler.showLicense()
         }
     }
 }
