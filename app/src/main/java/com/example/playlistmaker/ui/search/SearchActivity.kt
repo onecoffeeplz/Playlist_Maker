@@ -34,7 +34,11 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { doSearch(userInput) }
+    private val searchRunnable = Runnable {
+        if (userInput.isNotEmpty()) {
+            doSearch(userInput)
+        }
+    }
 
     private val trackList: MutableList<Track> = mutableListOf()
     private lateinit var searchHistoryTrackList: MutableList<Track>
@@ -65,6 +69,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
         binding.clearButton.setOnClickListener {
             binding.searchbar.text.clear()
+            userInput = ""
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
             binding.searchNetworkError.visibility = View.GONE
@@ -86,11 +91,16 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
+                    userInput = ""
                     binding.clearButton.visibility = View.GONE
                     binding.searchHistory.visibility =
                         if (binding.searchbar.hasFocus() && searchHistoryTrackList.isNotEmpty()) View.VISIBLE else View.GONE
+                    binding.rvTracks.visibility = View.GONE
+                    trackList.clear()
+                    trackAdapter.notifyDataSetChanged()
                 } else {
                     userInput = s.toString()
+                    binding.rvTracks.visibility = View.VISIBLE
                     binding.searchHistory.visibility = View.GONE
                     binding.clearButton.visibility = View.VISIBLE
                     searchDebounce()
@@ -115,6 +125,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         binding.reloadButton.setOnClickListener {
             doSearch(userInput)
         }
+
         binding.searchbar.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 doSearch(userInput)
@@ -156,6 +167,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
                         binding.searchNothingFound.visibility = View.GONE
                         binding.progressBar.visibility = View.GONE
                         trackList.clear()
+                        trackAdapter.notifyDataSetChanged()
                         if (foundTracks.isNotEmpty()) {
                             binding.rvTracks.visibility = View.VISIBLE
                             trackList.addAll(foundTracks)
@@ -198,7 +210,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
             startActivity(intent)
 
             searchHistoryInteractor.addTrack(track)
-            searchAdapter.trackList = searchHistoryInteractor.getSearchHistory()
+            searchHistoryInteractor.checkConditionsAndAdd(track, searchHistoryTrackList)
             searchAdapter.notifyDataSetChanged()
         }
     }
