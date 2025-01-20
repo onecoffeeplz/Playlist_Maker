@@ -6,8 +6,8 @@ import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl(private var storage: LocalRepository): SearchHistoryRepository {
-    private val gson = Gson()
+class SearchHistoryRepositoryImpl(private var storage: LocalRepository, private val gson: Gson) :
+    SearchHistoryRepository {
 
     override fun getSearchHistory(): MutableList<Track> {
         val json = storage.getString(SEARCH_HISTORY, null) ?: return mutableListOf()

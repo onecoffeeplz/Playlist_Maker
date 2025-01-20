@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.app.Application
 import android.app.Application.MODE_PRIVATE
+import android.media.MediaPlayer
 import com.example.playlistmaker.data.ActionHandlerRepositoryImpl
 import com.example.playlistmaker.data.AppThemeRepositoryImpl
 import com.example.playlistmaker.data.PlayerRepositoryImpl
@@ -9,7 +10,9 @@ import com.example.playlistmaker.data.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.TracksRepositoryImpl
 import com.example.playlistmaker.data.local.LocalRepositoryImpl
 import com.example.playlistmaker.data.local.LocalRepositoryImpl.Companion.PLAYLIST_MAKER_PREFERENCES
+import com.example.playlistmaker.data.network.ITunesAPI
 import com.example.playlistmaker.data.network.RetrofitClient
+import com.example.playlistmaker.data.network.RetrofitClient.Companion.BASE_URL
 import com.example.playlistmaker.domain.api.ActionHandlerInteractor
 import com.example.playlistmaker.domain.api.ActionHandlerRepository
 import com.example.playlistmaker.domain.api.AppThemeInteractor
@@ -26,7 +29,9 @@ import com.example.playlistmaker.domain.impl.AppThemeInteractorImpl
 import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
-
+import com.google.gson.Gson
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 object Creator {
 
@@ -36,7 +41,7 @@ object Creator {
         this.application = application
     }
 
-    fun provideLocalRepository(): LocalRepository {
+    private fun provideLocalRepository(): LocalRepository {
         return LocalRepositoryImpl(
             application.getSharedPreferences(
                 PLAYLIST_MAKER_PREFERENCES,
@@ -61,8 +66,25 @@ object Creator {
         return ActionHandlerInteractorImpl(getActionHandlerRepository())
     }
 
+    private fun getGson(): Gson {
+        return Gson()
+    }
+
+    private fun getApiService(): ITunesAPI {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val iTunesService: ITunesAPI by lazy {
+            retrofit.create(ITunesAPI::class.java)
+        }
+
+        return iTunesService
+    }
+
     private fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitClient)
+        return TracksRepositoryImpl(RetrofitClient(getApiService()))
     }
 
     fun provideTracksInteractor(): TracksInteractor {
@@ -70,15 +92,19 @@ object Creator {
     }
 
     private fun getSearchHistoryRepository(): SearchHistoryRepository {
-        return SearchHistoryRepositoryImpl(provideLocalRepository())
+        return SearchHistoryRepositoryImpl(provideLocalRepository(), getGson())
     }
 
     fun provideSearchHistoryInteractor(): SearchHistoryInteractor {
         return SearchHistoryInteractorImpl(getSearchHistoryRepository())
     }
 
+    private fun getMediaPlayer(): MediaPlayer {
+        return MediaPlayer()
+    }
+
     private fun getPlayerRepository(): PlayerRepository {
-        return PlayerRepositoryImpl()
+        return PlayerRepositoryImpl(getMediaPlayer())
     }
 
     fun providePlayerInteractor(): PlayerInteractor {
