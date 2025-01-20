@@ -1,12 +1,12 @@
 package com.example.playlistmaker.data
 
-import com.example.playlistmaker.domain.api.LocalRepository
+import com.example.playlistmaker.domain.api.LocalDataSource
 import com.example.playlistmaker.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl(private var storage: LocalRepository, private val gson: Gson) :
+class SearchHistoryRepositoryImpl(private var storage: LocalDataSource, private val gson: Gson) :
     SearchHistoryRepository {
 
     override fun getSearchHistory(): MutableList<Track> {

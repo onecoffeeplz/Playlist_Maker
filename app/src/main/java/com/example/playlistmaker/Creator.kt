@@ -8,8 +8,8 @@ import com.example.playlistmaker.data.AppThemeRepositoryImpl
 import com.example.playlistmaker.data.PlayerRepositoryImpl
 import com.example.playlistmaker.data.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.TracksRepositoryImpl
-import com.example.playlistmaker.data.local.LocalRepositoryImpl
-import com.example.playlistmaker.data.local.LocalRepositoryImpl.Companion.PLAYLIST_MAKER_PREFERENCES
+import com.example.playlistmaker.data.local.LocalDataSourceImpl
+import com.example.playlistmaker.data.local.LocalDataSourceImpl.Companion.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.data.network.ITunesAPI
 import com.example.playlistmaker.data.network.RetrofitClient
 import com.example.playlistmaker.data.network.RetrofitClient.Companion.BASE_URL
@@ -17,7 +17,7 @@ import com.example.playlistmaker.domain.api.ActionHandlerInteractor
 import com.example.playlistmaker.domain.api.ActionHandlerRepository
 import com.example.playlistmaker.domain.api.AppThemeInteractor
 import com.example.playlistmaker.domain.api.AppThemeRepository
-import com.example.playlistmaker.domain.api.LocalRepository
+import com.example.playlistmaker.domain.api.LocalDataSource
 import com.example.playlistmaker.domain.api.PlayerInteractor
 import com.example.playlistmaker.domain.api.PlayerRepository
 import com.example.playlistmaker.domain.api.SearchHistoryInteractor
@@ -41,8 +41,8 @@ object Creator {
         this.application = application
     }
 
-    private fun provideLocalRepository(): LocalRepository {
-        return LocalRepositoryImpl(
+    private fun provideLocalDataSource(): LocalDataSource {
+        return LocalDataSourceImpl(
             application.getSharedPreferences(
                 PLAYLIST_MAKER_PREFERENCES,
                 MODE_PRIVATE
@@ -51,7 +51,7 @@ object Creator {
     }
 
     private fun getAppThemeRepository(): AppThemeRepository {
-        return AppThemeRepositoryImpl(provideLocalRepository(), application)
+        return AppThemeRepositoryImpl(provideLocalDataSource(), application)
     }
 
     fun provideAppThemeInteractor(): AppThemeInteractor {
@@ -92,7 +92,7 @@ object Creator {
     }
 
     private fun getSearchHistoryRepository(): SearchHistoryRepository {
-        return SearchHistoryRepositoryImpl(provideLocalRepository(), getGson())
+        return SearchHistoryRepositoryImpl(provideLocalDataSource(), getGson())
     }
 
     fun provideSearchHistoryInteractor(): SearchHistoryInteractor {

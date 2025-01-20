@@ -3,11 +3,11 @@ package com.example.playlistmaker.data
 import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.data.local.LocalRepositoryImpl.Companion.DARK_THEME_ENABLED
+import com.example.playlistmaker.data.local.LocalDataSourceImpl.Companion.DARK_THEME_ENABLED
 import com.example.playlistmaker.domain.api.AppThemeRepository
-import com.example.playlistmaker.domain.api.LocalRepository
+import com.example.playlistmaker.domain.api.LocalDataSource
 
-class AppThemeRepositoryImpl(private var storage: LocalRepository, private val context: Context): AppThemeRepository {
+class AppThemeRepositoryImpl(private var storage: LocalDataSource, private val context: Context): AppThemeRepository {
 
     private var darkTheme = false
 

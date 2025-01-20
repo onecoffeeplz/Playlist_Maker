@@ -1,9 +1,9 @@
 package com.example.playlistmaker.data.local
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.domain.api.LocalRepository
+import com.example.playlistmaker.domain.api.LocalDataSource
 
-class LocalRepositoryImpl(private var sharedPreferences: SharedPreferences): LocalRepository {
+class LocalDataSourceImpl(private var sharedPreferences: SharedPreferences): LocalDataSource {
     override fun getBoolean(key: String, defValue: Boolean): Boolean {
         return sharedPreferences.getBoolean(key, defValue)
     }
