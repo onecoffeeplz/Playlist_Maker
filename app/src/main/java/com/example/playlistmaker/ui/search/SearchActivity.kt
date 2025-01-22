@@ -1,8 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,11 +15,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.api.TracksInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.player.PlayerActivity
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
@@ -32,28 +34,29 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { doSearch(userInput) }
-
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var searchHistory: SearchHistory
+    private val searchRunnable = Runnable {
+        if (userInput.isNotEmpty()) {
+            doSearch(userInput)
+        }
+    }
 
     private val trackList: MutableList<Track> = mutableListOf()
     private lateinit var searchHistoryTrackList: MutableList<Track>
     private val trackAdapter = TrackAdapter(trackList, this)
     private var searchAdapter = TrackAdapter(trackList, this)
+    private val tracksInteractor = Creator.provideTracksInteractor()
+    private val searchHistoryInteractor = Creator.provideSearchHistoryInteractor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedPreferences = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPreferences)
-        searchHistoryTrackList = searchHistory.getSearchHistory()
+        searchHistoryTrackList = searchHistoryInteractor.getSearchHistory()
         searchAdapter = TrackAdapter(searchHistoryTrackList, this)
 
-        with (binding.searchbar) {
-            postDelayed({setKeyboardAndCursor(this)}, 100)
+        with(binding.searchbar) {
+            postDelayed({ setKeyboardAndCursor(this) }, 100)
             setOnFocusChangeListener { _, hasFocus ->
                 binding.searchHistory.visibility =
                     if (hasFocus && searchHistoryTrackList.isNotEmpty() && binding.searchbar.text.isEmpty()) View.VISIBLE else View.GONE
@@ -66,6 +69,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
         binding.clearButton.setOnClickListener {
             binding.searchbar.text.clear()
+            userInput = ""
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
             binding.searchNetworkError.visibility = View.GONE
@@ -74,7 +78,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         }
 
         binding.clearHistoryButton.setOnClickListener {
-            searchHistory.clearSearchHistory()
+            searchHistoryInteractor.clearSearchHistory()
             searchHistoryTrackList.clear()
             searchAdapter.notifyDataSetChanged()
             binding.searchHistory.visibility = View.GONE
@@ -87,11 +91,16 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
+                    userInput = ""
                     binding.clearButton.visibility = View.GONE
                     binding.searchHistory.visibility =
                         if (binding.searchbar.hasFocus() && searchHistoryTrackList.isNotEmpty()) View.VISIBLE else View.GONE
+                    binding.rvTracks.visibility = View.GONE
+                    trackList.clear()
+                    trackAdapter.notifyDataSetChanged()
                 } else {
                     userInput = s.toString()
+                    binding.rvTracks.visibility = View.VISIBLE
                     binding.searchHistory.visibility = View.GONE
                     binding.clearButton.visibility = View.VISIBLE
                     searchDebounce()
@@ -116,6 +125,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         binding.reloadButton.setOnClickListener {
             doSearch(userInput)
         }
+
         binding.searchbar.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 doSearch(userInput)
@@ -141,40 +151,43 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         if (userInput.isNotEmpty()) {
             binding.rvTracks.visibility = View.GONE
             binding.progressBar.visibility = View.VISIBLE
-            RetrofitClient.iTunesService.search(userInput)
-                .enqueue(object : Callback<TracksResponse> {
-                    override fun onResponse(
-                        call: Call<TracksResponse>,
-                        response: Response<TracksResponse>
-                    ) {
+
+            if (!isNetworkAvailable()) {
+                hideKeyboardAndCursor()
+                binding.progressBar.visibility = View.GONE
+                binding.searchNothingFound.visibility = View.GONE
+                binding.searchNetworkError.visibility = View.VISIBLE
+                return
+            }
+
+            tracksInteractor.search(userInput, object : TracksInteractor.TracksConsumer {
+                override fun consume(foundTracks: List<Track>) {
+                    handler.post {
                         binding.searchNetworkError.visibility = View.GONE
                         binding.searchNothingFound.visibility = View.GONE
                         binding.progressBar.visibility = View.GONE
-                        if (response.code() == 200) {
-                            trackList.clear()
-                            if (response.body()?.results?.isNotEmpty() == true) {
-                                binding.rvTracks.visibility = View.VISIBLE
-                                trackList.addAll(response.body()?.results!!)
-                                trackAdapter.notifyDataSetChanged()
-                            }
-                            if (trackList.isEmpty()) {
-                                binding.searchNothingFound.visibility = View.VISIBLE
-                                binding.searchNetworkError.visibility = View.GONE
-                            }
+                        trackList.clear()
+                        trackAdapter.notifyDataSetChanged()
+                        if (foundTracks.isNotEmpty()) {
+                            binding.rvTracks.visibility = View.VISIBLE
+                            trackList.addAll(foundTracks)
+                            trackAdapter.notifyDataSetChanged()
                         } else {
-                            binding.searchNothingFound.visibility = View.GONE
-                            binding.searchNetworkError.visibility = View.VISIBLE
+                            binding.searchNothingFound.visibility = View.VISIBLE
+                            binding.searchNetworkError.visibility = View.GONE
                         }
                     }
-
-                    override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-                        hideKeyboardAndCursor()
-                        binding.progressBar.visibility = View.GONE
-                        binding.searchNothingFound.visibility = View.GONE
-                        binding.searchNetworkError.visibility = View.VISIBLE
-                    }
-                })
+                }
+            })
         }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities =
+            connectivityManager.activeNetwork?.let { connectivityManager.getNetworkCapabilities(it) }
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -196,8 +209,8 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
             }
             startActivity(intent)
 
-            searchHistory.addTrack(track)
-            searchHistory.checkConditionsAndAdd(track, searchHistoryTrackList)
+            searchHistoryInteractor.addTrack(track)
+            searchHistoryInteractor.checkConditionsAndAdd(track, searchHistoryTrackList)
             searchAdapter.notifyDataSetChanged()
         }
     }
@@ -207,7 +220,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         handler.removeCallbacks(searchRunnable)
     }
 
-    private fun clickDebounce() : Boolean {
+    private fun clickDebounce(): Boolean {
         val currentClickState = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
