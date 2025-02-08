@@ -2,62 +2,70 @@ package com.example.playlistmaker.player.data.impl
 
 import android.media.MediaPlayer
 import com.example.playlistmaker.player.domain.api.PlayerRepository
+import com.example.playlistmaker.player.domain.model.PlayerState
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlayerRepositoryImpl(private var mediaPlayer: MediaPlayer) : PlayerRepository {
 
-    private var playerState = STATE_DEFAULT
+    private var playerState = PlayerState.DEFAULT
 
     override fun preparePlayer(url: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playerState = STATE_PREPARED
-            onPrepared()
-        }
-        mediaPlayer.setOnCompletionListener {
-            playerState = STATE_PREPARED
-            onCompletion()
+        try {
+            mediaPlayer.setDataSource(url)
+            mediaPlayer.prepareAsync()
+            mediaPlayer.setOnPreparedListener {
+                playerState = PlayerState.PREPARED
+                onPrepared()
+            }
+            mediaPlayer.setOnCompletionListener {
+                playerState = PlayerState.PREPARED
+                onCompletion()
+            }
+            mediaPlayer.setOnErrorListener { _, _, _ ->
+                playerState = PlayerState.ERROR
+                true
+            }
+        } catch (e: Exception) {
+            playerState = PlayerState.ERROR
         }
     }
 
     override fun startPlayer() {
         mediaPlayer.start()
-        playerState = STATE_PLAYING
+        playerState = PlayerState.PLAYING
     }
 
     override fun pausePlayer() {
         mediaPlayer.pause()
-        playerState = STATE_PAUSED
+        playerState = PlayerState.PAUSED
     }
 
     override fun release() {
         mediaPlayer.release()
     }
 
-    override fun playbackControl(): Boolean {
-        return when (playerState) {
-            STATE_PLAYING -> {
+    override fun playbackControl(callback: (PlayerState) -> Unit) {
+        when (playerState) {
+            PlayerState.DEFAULT, PlayerState.PLAYING -> {
                 pausePlayer()
-                false
+                callback(PlayerState.PAUSED)
             }
 
-            STATE_PREPARED, STATE_PAUSED -> {
+            PlayerState.PREPARED, PlayerState.PAUSED -> {
                 startPlayer()
-                true
+                callback(PlayerState.PLAYING)
             }
 
-            else -> false
+            PlayerState.ERROR -> {
+                callback(PlayerState.ERROR)
+            }
+
         }
     }
 
-    override fun currentPosition(): Long {
-        return mediaPlayer.currentPosition.toLong()
-    }
+    override fun currentPosition(): String = SimpleDateFormat(
+        "mm:ss", Locale.getDefault()
+    ).format(mediaPlayer.currentPosition)
 
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-    }
 }

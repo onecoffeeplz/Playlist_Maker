@@ -2,17 +2,18 @@ package com.example.playlistmaker.player.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.player.domain.model.PlayerState
+import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
@@ -24,16 +25,36 @@ class PlayerActivity : AppCompatActivity() {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivityPlayerBinding must not be null!")
 
+    private lateinit var viewModel: PlayerViewModel
     private lateinit var playButton: ImageButton
-    private var mediaPlayer = Creator.providePlayerInteractor()
     private lateinit var url: String
-    private val handler = Handler(Looper.getMainLooper())
-    private lateinit var updateProgressRunnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        playButton = binding.playBtn
+
+        viewModel = ViewModelProvider(
+            this, PlayerViewModel.getViewModelFactory()
+        )[PlayerViewModel::class.java]
+        viewModel.observeState().observe(this) { state ->
+            when (state) {
+                PlayerState.PLAYING -> {
+                    playButton.setImageResource(R.drawable.ic_pause)
+                }
+
+                PlayerState.DEFAULT, PlayerState.PREPARED, PlayerState.PAUSED -> {
+                    playButton.setImageResource(R.drawable.ic_play)
+                }
+
+                PlayerState.ERROR -> {
+                    playButton.setImageResource(R.drawable.ic_play)
+                    Toast.makeText(this, getString(R.string.smth_wrong), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         binding.mediaToolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -42,6 +63,7 @@ class PlayerActivity : AppCompatActivity() {
         val jsonTrack = intent.getStringExtra("track")
         val track = Gson().fromJson(jsonTrack, Track::class.java)
         url = track.previewUrl
+        viewModel.preparePlayer(url)
 
         with(binding) {
             trackName.text = track.trackName
@@ -64,30 +86,12 @@ class PlayerActivity : AppCompatActivity() {
                 .into(albumCover)
         }
 
-        playButton = binding.playBtn
-
-        mediaPlayer.preparePlayer(
-            url,
-            { playButton.isEnabled = true },
-            {
-                playButton.setImageResource(R.drawable.ic_play)
-                handler.removeCallbacks(updateProgressRunnable)
-                binding.listenProgress.text = "0:00"
-            })
+        observeListenProgress()
 
         playButton.setOnClickListener {
-            playbackControl()
+            viewModel.playbackControl()
         }
 
-        updateProgressRunnable = object : Runnable {
-            override fun run() {
-                binding.listenProgress.text = SimpleDateFormat(
-                    "mm:ss",
-                    Locale.getDefault()
-                ).format(mediaPlayer.currentPosition())
-                handler.postDelayed(this, TIMER_UPDATE_TIME)
-            }
-        }
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {
@@ -98,43 +102,21 @@ class PlayerActivity : AppCompatActivity() {
         ).toInt()
     }
 
-    private fun startPlayer() {
-        mediaPlayer.startPlayer()
-        playButton.setImageResource(R.drawable.ic_pause)
-        handler.post(updateProgressRunnable)
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pausePlayer()
-        playButton.setImageResource(R.drawable.ic_play)
-        handler.removeCallbacks(updateProgressRunnable)
-    }
-
-    private fun playbackControl() {
-        when (mediaPlayer.playbackControl()) {
-            false -> {
-                pausePlayer()
-            }
-
-            else -> {
-                startPlayer()
-            }
+    private fun observeListenProgress() {
+        viewModel.listenProgress.observe(this) { position ->
+            binding.listenProgress.text = position
         }
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        playButton.setImageResource(R.drawable.ic_play)
+        viewModel.onPausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
-        handler.removeCallbacks(updateProgressRunnable)
-    }
-
-    companion object {
-        private const val TIMER_UPDATE_TIME = 500L
+        viewModel.onRelease()
     }
 
 }

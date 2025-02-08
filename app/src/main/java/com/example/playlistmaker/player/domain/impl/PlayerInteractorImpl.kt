@@ -2,6 +2,7 @@ package com.example.playlistmaker.player.domain.impl
 
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.api.PlayerRepository
+import com.example.playlistmaker.player.domain.model.PlayerState
 
 class PlayerInteractorImpl(private val player: PlayerRepository): PlayerInteractor {
 
@@ -21,11 +22,11 @@ class PlayerInteractorImpl(private val player: PlayerRepository): PlayerInteract
         player.release()
     }
 
-    override fun playbackControl(): Boolean {
-        return player.playbackControl()
+    override fun playbackControl(callback: (PlayerState) -> Unit) {
+        return player.playbackControl(callback)
     }
 
-    override fun currentPosition() : Long {
+    override fun currentPosition() : String {
         return player.currentPosition()
     }
 
