@@ -42,33 +42,31 @@ class SearchViewModel(
     }
 
     private fun doSearch(userInput: String) {
-        if (userInput.isNotEmpty()) {
-            searchState.postValue(SearchState.Loading)
+        searchState.postValue(SearchState.Loading)
 
-            tracksInteractor.search(userInput, object : TracksInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?, errorType: ErrorType?) {
-                    handler.post {
-                        when (errorType) {
-                            ErrorType.NO_CONNECTION, ErrorType.SERVER_ERROR -> searchState.postValue(
-                                SearchState.Error(errorType)
-                            )
+        tracksInteractor.search(userInput, object : TracksInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>?, errorType: ErrorType?) {
+                handler.post {
+                    when (errorType) {
+                        ErrorType.NO_CONNECTION, ErrorType.SERVER_ERROR -> searchState.postValue(
+                            SearchState.Error(errorType)
+                        )
 
-                            ErrorType.NOTHING_FOUND -> searchState.postValue(SearchState.NothingFound)
-                            null -> {
-                                val tracksResult = foundTracks ?: emptyList()
-                                if (tracksResult.isEmpty()) {
-                                    searchState.postValue(SearchState.NothingFound)
-                                } else {
-                                    trackList.clear()
-                                    trackList.addAll(tracksResult)
-                                    searchState.postValue(SearchState.Content(trackList))
-                                }
+                        ErrorType.NOTHING_FOUND -> searchState.postValue(SearchState.NothingFound)
+                        null -> {
+                            val tracksResult = foundTracks ?: emptyList()
+                            if (tracksResult.isEmpty()) {
+                                searchState.postValue(SearchState.NothingFound)
+                            } else {
+                                trackList.clear()
+                                trackList.addAll(tracksResult)
+                                searchState.postValue(SearchState.Content(trackList))
                             }
                         }
                     }
                 }
-            })
-        } else return
+            }
+        })
     }
 
     fun onClearButtonClick() {

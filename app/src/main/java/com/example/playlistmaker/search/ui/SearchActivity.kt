@@ -106,6 +106,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
                     binding.clearButton.visibility = View.GONE
                     updateHistoryView(historyAdapter.trackList)
                     binding.rvTracks.visibility = View.GONE
+                    viewModel.onClearButtonClick()
                 } else {
                     binding.rvTracks.visibility = View.VISIBLE
                     binding.searchHistory.visibility = View.GONE
