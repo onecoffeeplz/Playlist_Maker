@@ -2,8 +2,9 @@ package com.example.playlistmaker.settings.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.creator.Creator
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.settings.presentation.SettingsViewModel
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -12,35 +13,41 @@ class SettingsActivity : AppCompatActivity() {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivitySettingsBinding must not be null!")
 
-    private val appThemeInteractor = Creator.provideAppThemeInteractor()
-    private val actionHandler = Creator.provideActionHandlerInteractor()
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.settingsToolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+        viewModel = ViewModelProvider(
+            this,
+            SettingsViewModel.getViewModelFactory()
+        )[SettingsViewModel::class.java]
+        viewModel.darkThemeEnabled().observe(this) {
+            binding.settingsTheme.isChecked = it
         }
 
-        with (binding.settingsTheme) {
-            isChecked = appThemeInteractor.getCurrentTheme()
-            setOnCheckedChangeListener { _, isChecked ->
-                appThemeInteractor.switchTheme(isChecked)
+        with (binding) {
+            settingsToolbar.setNavigationOnClickListener {
+                onBackPressedDispatcher.onBackPressed()
+            }
+            settingsShare.setOnClickListener {
+                viewModel.onShareApp()
+            }
+            settingsSupport.setOnClickListener {
+                viewModel.onContactSupport()
+            }
+            settingsLicense.setOnClickListener {
+                viewModel.onShowLicense()
             }
         }
 
-        binding.settingsShare.setOnClickListener {
-            actionHandler.shareApp()
-        }
-
-        binding.settingsSupport.setOnClickListener {
-            actionHandler.contactSupport()
-        }
-
-        binding.settingsLicense.setOnClickListener {
-            actionHandler.showLicense()
+        with (binding.settingsTheme) {
+            isChecked = viewModel.onGetCurrentTheme()
+            setOnCheckedChangeListener { _, isChecked ->
+                viewModel.onSwitchTheme(isChecked)
+            }
         }
     }
 }
