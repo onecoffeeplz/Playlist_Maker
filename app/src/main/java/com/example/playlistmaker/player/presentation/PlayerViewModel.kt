@@ -17,11 +17,12 @@ class PlayerViewModel(val interactor: PlayerInteractor) : ViewModel() {
     private val handler = Handler(Looper.getMainLooper())
 
     private val playerState = MutableLiveData<PlayerState>()
-    val listenProgress = MutableLiveData<String>()
+    private val _listenProgress = MutableLiveData<String>()
+    val listenProgress: LiveData<String> get() = _listenProgress
 
     private var updateProgressRunnable: Runnable = object : Runnable {
         override fun run() {
-            listenProgress.value = interactor.currentPosition()
+            _listenProgress.value = interactor.currentPosition()
             handler.postDelayed(this, TIMER_UPDATE_TIME)
         }
     }
@@ -42,7 +43,7 @@ class PlayerViewModel(val interactor: PlayerInteractor) : ViewModel() {
                 {
                     playerState.postValue(PlayerState.DEFAULT)
                     handler.removeCallbacks(updateProgressRunnable)
-                    listenProgress.value = "0:00"
+                    _listenProgress.value = "0:00"
                 })
         } else {
             playerState.postValue(PlayerState.ERROR)
