@@ -20,8 +20,8 @@ class SettingsActivity : AppCompatActivity() {
         _binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.darkThemeEnabled().observe(this) {
-            binding.settingsTheme.isChecked = it
+        viewModel.darkThemeEnabled.observe(this) { isDarkThemeEnabled ->
+            binding.settingsTheme.isChecked = isDarkThemeEnabled
         }
 
         with(binding) {
@@ -39,11 +39,8 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        with(binding.settingsTheme) {
-            isChecked = viewModel.onGetCurrentTheme()
-            setOnCheckedChangeListener { _, isChecked ->
-                viewModel.onSwitchTheme(isChecked)
-            }
+        binding.settingsTheme.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onSwitchTheme(isChecked)
         }
     }
 }

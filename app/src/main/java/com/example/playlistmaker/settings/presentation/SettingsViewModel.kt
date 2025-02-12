@@ -16,13 +16,13 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     private val _darkThemeEnabled = MutableLiveData<Boolean>()
-    fun darkThemeEnabled(): LiveData<Boolean> = _darkThemeEnabled
+    val darkThemeEnabled: LiveData<Boolean> get() = _darkThemeEnabled
 
     init {
-        onSwitchTheme(onGetCurrentTheme())
+        _darkThemeEnabled.value = onGetCurrentTheme()
     }
 
-    fun onGetCurrentTheme(): Boolean {
+    private fun onGetCurrentTheme(): Boolean {
         return appThemeInteractor.getCurrentTheme()
     }
 
