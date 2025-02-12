@@ -6,8 +6,8 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -25,7 +25,7 @@ class PlayerActivity : AppCompatActivity() {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivityPlayerBinding must not be null!")
 
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel by viewModels<PlayerViewModel> { PlayerViewModel.getViewModelFactory() }
     private lateinit var playButton: ImageButton
     private lateinit var url: String
 
@@ -36,9 +36,6 @@ class PlayerActivity : AppCompatActivity() {
 
         playButton = binding.playBtn
 
-        viewModel = ViewModelProvider(
-            this, PlayerViewModel.getViewModelFactory()
-        )[PlayerViewModel::class.java]
         viewModel.observeState().observe(this) { state ->
             when (state) {
                 PlayerState.PLAYING -> {

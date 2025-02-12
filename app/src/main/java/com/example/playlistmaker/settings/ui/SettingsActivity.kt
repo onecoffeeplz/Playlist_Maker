@@ -1,8 +1,8 @@
 package com.example.playlistmaker.settings.ui
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 
@@ -13,22 +13,18 @@ class SettingsActivity : AppCompatActivity() {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivitySettingsBinding must not be null!")
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel by viewModels<SettingsViewModel> { SettingsViewModel.getViewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.getViewModelFactory()
-        )[SettingsViewModel::class.java]
         viewModel.darkThemeEnabled().observe(this) {
             binding.settingsTheme.isChecked = it
         }
 
-        with (binding) {
+        with(binding) {
             settingsToolbar.setNavigationOnClickListener {
                 onBackPressedDispatcher.onBackPressed()
             }
@@ -43,7 +39,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        with (binding.settingsTheme) {
+        with(binding.settingsTheme) {
             isChecked = viewModel.onGetCurrentTheme()
             setOnCheckedChangeListener { _, isChecked ->
                 viewModel.onSwitchTheme(isChecked)

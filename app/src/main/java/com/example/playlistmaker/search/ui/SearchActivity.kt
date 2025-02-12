@@ -9,8 +9,8 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.models.Track
@@ -27,20 +27,16 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivitySearchBinding must not be null!")
 
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModels<SearchViewModel> { SearchViewModel.getViewModelFactory() }
     private val trackList: MutableList<Track> = mutableListOf()
     private val searchAdapter = TrackAdapter(trackList, this)
-    private var historyAdapter = TrackAdapter(trackList, this)
+    private val historyAdapter = TrackAdapter(trackList, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
         viewModel.observeState().observe(this) { state ->
             when (state) {
                 is SearchState.Loading -> showLoading()

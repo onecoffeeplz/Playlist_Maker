@@ -34,7 +34,7 @@ class SearchViewModel(
     fun observeState(): LiveData<SearchState> = searchState
 
     private val trackList: MutableList<Track> = mutableListOf()
-    private var searchHistoryTrackList: MutableList<Track> = mutableListOf()
+    private val searchHistoryTrackList: MutableList<Track> = mutableListOf()
 
     init {
         searchHistoryTrackList.addAll(searchHistoryInteractor.getSearchHistory())
