@@ -25,6 +25,9 @@ class SearchViewModel(
     private val searchState = MutableLiveData<SearchState>()
     private var userInput: String = ""
 
+    private val _onTrackClickTrigger = SingleEventLiveData<Track>()
+    fun onTrackClickTrigger(): LiveData<Track> = _onTrackClickTrigger
+
     private val searchRunnable = Runnable {
         if (userInput.isNotEmpty()) {
             doSearch(userInput)
@@ -81,7 +84,7 @@ class SearchViewModel(
         searchState.postValue(SearchState.History(searchHistoryTrackList))
     }
 
-    fun onClick(track: Track) {
+    private fun addTrackToHistory(track: Track) {
         searchHistoryInteractor.addTrack(track)
         searchHistoryInteractor.checkConditionsAndAdd(track, searchHistoryTrackList)
     }
@@ -91,13 +94,13 @@ class SearchViewModel(
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
-    fun clickDebounce(): Boolean {
-        val currentClickState = isClickAllowed
+    fun clickDebounce(track: Track) {
         if (isClickAllowed) {
             isClickAllowed = false
+            addTrackToHistory(track)
+            _onTrackClickTrigger.value = track
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
-        return currentClickState
     }
 
     fun searchDebounce(changedText: String) {

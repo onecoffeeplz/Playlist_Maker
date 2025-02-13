@@ -47,6 +47,10 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
             }
         }
 
+        viewModel.onTrackClickTrigger().observe(this) { track ->
+            openPlayer(track)
+        }
+
         with(binding.rvTracks) {
             layoutManager = LinearLayoutManager(applicationContext)
             adapter = searchAdapter
@@ -180,14 +184,14 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     }
 
     override fun onTrackClick(track: Track) {
-        if (viewModel.clickDebounce()) {
-            viewModel.onClick(track)
-            historyAdapter.notifyDataSetChanged()
-            val intent = Intent(this, PlayerActivity::class.java).apply {
-                putExtra("track", Gson().toJson(track))
-            }
-            startActivity(intent)
-        }
+        viewModel.clickDebounce(track)
+        historyAdapter.notifyDataSetChanged()
     }
 
+    private fun openPlayer(track: Track) {
+        val intent = Intent(this, PlayerActivity::class.java).apply {
+            putExtra("track", Gson().toJson(track))
+        }
+        startActivity(intent)
+    }
 }
