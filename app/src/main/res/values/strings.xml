@@ -29,4 +29,5 @@
     <string name="genre">Жанр</string>
     <string name="country">Страна</string>
     <string name="play">Воспроизвести</string>
+    <string name="smth_wrong">Что-то пошло не так...</string>
 </resources>
