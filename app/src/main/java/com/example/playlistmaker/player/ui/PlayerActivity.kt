@@ -6,7 +6,6 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -16,6 +15,7 @@ import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -25,7 +25,7 @@ class PlayerActivity : AppCompatActivity() {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivityPlayerBinding must not be null!")
 
-    private val viewModel by viewModels<PlayerViewModel> { PlayerViewModel.getViewModelFactory() }
+    private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var playButton: ImageButton
     private lateinit var url: String
 
