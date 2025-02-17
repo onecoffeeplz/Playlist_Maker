@@ -21,7 +21,7 @@ val dataModule = module {
             .getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, Context.MODE_PRIVATE)
     }
 
-    factory { Gson() }
+    single { Gson() }
 
     single<ITunesAPI> {
         Retrofit.Builder()

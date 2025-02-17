@@ -14,19 +14,19 @@ import org.koin.dsl.module
 
 val interactorModule = module {
 
-    single<AppThemeInteractor> {
+    factory<AppThemeInteractor> {
         AppThemeInteractorImpl(theme = get())
     }
 
-    single<ActionHandlerInteractor> {
+    factory<ActionHandlerInteractor> {
         ActionHandlerInteractorImpl(action = get())
     }
 
-    single<TracksInteractor> {
+    factory<TracksInteractor> {
         TracksInteractorImpl(repository = get())
     }
 
-    single<SearchHistoryInteractor> {
+    factory<SearchHistoryInteractor> {
         SearchHistoryInteractorImpl(repository = get())
     }
 

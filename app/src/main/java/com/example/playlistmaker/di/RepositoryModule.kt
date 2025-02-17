@@ -20,19 +20,19 @@ val repositoryModule = module {
         LocalDataSourceImpl(sharedPreferences = get())
     }
 
-    single<AppThemeRepository> {
+    factory<AppThemeRepository> {
         AppThemeRepositoryImpl(storage = get(), context = get())
     }
 
-    single<ActionHandlerRepository> {
+    factory<ActionHandlerRepository> {
         ActionHandlerRepositoryImpl(context = get())
     }
 
-    single<TracksRepository> {
+    factory<TracksRepository> {
         TracksRepositoryImpl(networkClient = get())
     }
 
-    single<SearchHistoryRepository> {
+    factory<SearchHistoryRepository> {
         SearchHistoryRepositoryImpl(storage = get(), gson = get())
     }
 
