@@ -1,10 +1,10 @@
 package com.example.playlistmaker.settings.ui
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -13,7 +13,7 @@ class SettingsActivity : AppCompatActivity() {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivitySettingsBinding must not be null!")
 
-    private val viewModel by viewModels<SettingsViewModel> { SettingsViewModel.getViewModelFactory() }
+    private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -41,6 +41,6 @@ class SearchHistoryRepositoryImpl(private var storage: LocalDataSource, private 
 
     companion object {
         private const val MAX_SEARCH_HISTORY = 10
-        private const val SEARCH_HISTORY = "search_history"
+        const val SEARCH_HISTORY = "search_history"
     }
 }

@@ -9,7 +9,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.ActivitySearchBinding
@@ -19,6 +18,7 @@ import com.example.playlistmaker.search.domain.models.ErrorType
 import com.example.playlistmaker.search.presentation.SearchState
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
 
@@ -27,7 +27,7 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
         get() = _binding
             ?: throw IllegalStateException("Binding for ActivitySearchBinding must not be null!")
 
-    private val viewModel by viewModels<SearchViewModel> { SearchViewModel.getViewModelFactory() }
+    private val viewModel by viewModel<SearchViewModel>()
     private val trackList: MutableList<Track> = mutableListOf()
     private val searchAdapter = TrackAdapter(trackList, this)
     private val historyAdapter = TrackAdapter(trackList, this)
