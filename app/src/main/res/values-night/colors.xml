@@ -17,6 +17,7 @@
     <color name="switch_thumb_color">#3772E7</color>
     <color name="switch_track_color">#9FBBF3</color>
     <color name="player_text_color">#FFFFFF</color>
+    <color name="media_text_color">#FFFFFF</color>
     <color name="player_details_text_color">#AEAFB4</color>
     <color name="progress_bar_color">#3772E7</color>
 </resources>

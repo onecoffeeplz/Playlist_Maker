@@ -29,4 +29,5 @@
     <dimen name="fab">51dp</dimen>
     <dimen name="height_32">32dp</dimen>
     <dimen name="pb_size">44dp</dimen>
+    <dimen name="height_48">48dp</dimen>
 </resources>

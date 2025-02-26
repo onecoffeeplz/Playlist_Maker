@@ -47,6 +47,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     implementation(libs.glide)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.fragment.ktx)
     annotationProcessor(libs.compiler)
 
     implementation(libs.retrofit)

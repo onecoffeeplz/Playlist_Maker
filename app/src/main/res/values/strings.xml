@@ -30,4 +30,7 @@
     <string name="country">Страна</string>
     <string name="play">Воспроизвести</string>
     <string name="smth_wrong">Что-то пошло не так...</string>
+    <string name="empty_favorites">Ваша медиатека пуста</string>
+    <string name="empty_playlists">Вы не создали\nни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
 </resources>
