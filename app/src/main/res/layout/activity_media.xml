@@ -17,11 +17,9 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
+        style="@style/MediaTabLayout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_48"
-        android:background="@color/media_background"
-        app:tabTextColor="@color/media_text_color"
-        app:tabIndicatorColor="@color/media_text_color" />
+        android:layout_height="@dimen/height_48" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
