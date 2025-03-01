@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".media.ui.FavoritesFragment">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="106dp"
+            android:contentDescription="@string/empty_favorites"
+            android:src="@drawable/ic_nothing_found" />
+
+        <TextView
+            style="@style/SearchAdditionalInfo"
+            android:paddingTop="242dp"
+            android:text="@string/empty_favorites" />
+
+</FrameLayout>

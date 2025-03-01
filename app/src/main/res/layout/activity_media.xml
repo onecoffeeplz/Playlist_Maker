@@ -12,7 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
         app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/icon_navigation"
+        app:navigationIconTint="@color/media_text_color"
         app:title="@string/media" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        style="@style/MediaTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_48" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

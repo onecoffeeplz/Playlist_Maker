@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".media.ui.PlaylistsFragment">
+
+    <Button
+        android:id="@+id/reload_button"
+        style="@style/SearchButton"
+        android:layout_marginTop="24dp"
+        android:text="@string/new_playlist" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="106dp"
+        android:contentDescription="@string/empty_playlists"
+        android:src="@drawable/ic_nothing_found" />
+
+    <TextView
+        style="@style/SearchAdditionalInfo"
+        android:paddingTop="242dp"
+        android:text="@string/empty_playlists" />
+
+</FrameLayout>
