@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.media.ui.MediaActivity
 import com.example.playlistmaker.search.ui.SearchActivity
-import com.example.playlistmaker.settings.ui.SettingsActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -25,10 +24,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.mainMediaButton.setOnClickListener {
             startActivity(Intent(this, MediaActivity::class.java))
-        }
-
-        binding.mainSettingsButton.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 }

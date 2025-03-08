@@ -11,8 +11,6 @@
         android:id="@+id/settings_toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/icon_navigation"
         app:title="@string/settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial

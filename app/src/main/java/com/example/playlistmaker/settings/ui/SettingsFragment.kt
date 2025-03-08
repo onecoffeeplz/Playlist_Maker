@@ -1,33 +1,39 @@
 package com.example.playlistmaker.settings.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.playlistmaker.databinding.FragmentSettingsBinding
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
-
-    private var _binding: ActivitySettingsBinding? = null
+class SettingsFragment : Fragment() {
+    private var _binding: FragmentSettingsBinding? = null
     private val binding
         get() = _binding
-            ?: throw IllegalStateException("Binding for ActivitySettingsBinding must not be null!")
+            ?: throw IllegalStateException("Binding for FragmentSettingsBinding must not be null!")
 
     private val viewModel by viewModel<SettingsViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        viewModel.darkThemeEnabled.observe(this) { isDarkThemeEnabled ->
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.darkThemeEnabled.observe(viewLifecycleOwner) { isDarkThemeEnabled ->
             binding.settingsTheme.isChecked = isDarkThemeEnabled
         }
 
         with(binding) {
-            settingsToolbar.setNavigationOnClickListener {
-                onBackPressedDispatcher.onBackPressed()
-            }
             settingsShare.setOnClickListener {
                 viewModel.onShareApp()
             }
