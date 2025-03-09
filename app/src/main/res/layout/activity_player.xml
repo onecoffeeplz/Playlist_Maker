@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/padding_16"
-    android:background="@color/player_background">
+    android:background="@color/player_background"
+    tools:context="com.example.playlistmaker.player.ui.PlayerActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
