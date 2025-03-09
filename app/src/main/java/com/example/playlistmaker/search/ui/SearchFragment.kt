@@ -22,7 +22,7 @@ import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchFragment: Fragment(), TrackAdapter.OnTrackClickListener {
+class SearchFragment : Fragment(), TrackAdapter.OnTrackClickListener {
     private var _binding: FragmentSearchBinding? = null
     private val binding
         get() = _binding
@@ -137,7 +137,8 @@ class SearchFragment: Fragment(), TrackAdapter.OnTrackClickListener {
     }
 
     private fun hideKeyboardAndCursor() {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val view: View? = requireView().findFocus()
         if (view is EditText) view.clearFocus()
         if (view != null) imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -145,7 +146,8 @@ class SearchFragment: Fragment(), TrackAdapter.OnTrackClickListener {
 
     private fun setKeyboardAndCursor(view: View) {
         view.requestFocus()
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
@@ -197,5 +199,10 @@ class SearchFragment: Fragment(), TrackAdapter.OnTrackClickListener {
             putExtra("track", Gson().toJson(track))
         }
         startActivity(intent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
