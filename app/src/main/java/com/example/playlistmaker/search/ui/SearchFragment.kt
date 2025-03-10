@@ -5,39 +5,47 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.models.ErrorType
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchState
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
-
-    private var _binding: ActivitySearchBinding? = null
+class SearchFragment : Fragment(), TrackAdapter.OnTrackClickListener {
+    private var _binding: FragmentSearchBinding? = null
     private val binding
         get() = _binding
-            ?: throw IllegalStateException("Binding for ActivitySearchBinding must not be null!")
+            ?: throw IllegalStateException("Binding for FragmentSearchBinding must not be null!")
 
     private val viewModel by viewModel<SearchViewModel>()
     private val trackList: MutableList<Track> = mutableListOf()
     private val searchAdapter = TrackAdapter(trackList, this)
     private val historyAdapter = TrackAdapter(trackList, this)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        viewModel.observeState().observe(this) { state ->
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.observeState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SearchState.Loading -> showLoading()
                 is SearchState.Content -> showSearchResults(state.tracks)
@@ -47,25 +55,21 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
             }
         }
 
-        viewModel.onTrackClickTrigger().observe(this) { track ->
+        viewModel.onTrackClickTrigger().observe(viewLifecycleOwner) { track ->
             openPlayer(track)
         }
 
         with(binding.rvTracks) {
-            layoutManager = LinearLayoutManager(applicationContext)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = searchAdapter
         }
 
         with(binding.rvHistoryTracks) {
-            layoutManager = LinearLayoutManager(applicationContext)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = historyAdapter
         }
 
         with(binding) {
-            searchToolbar.setNavigationOnClickListener {
-                onBackPressedDispatcher.onBackPressed()
-            }
-
             clearButton.setOnClickListener {
                 viewModel.onClearButtonClick()
                 searchbar.text.clear()
@@ -133,15 +137,17 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     }
 
     private fun hideKeyboardAndCursor() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        val view: View? = currentFocus
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val view: View? = requireView().findFocus()
         if (view is EditText) view.clearFocus()
         if (view != null) imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun setKeyboardAndCursor(view: View) {
         view.requestFocus()
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
@@ -189,9 +195,14 @@ class SearchActivity : AppCompatActivity(), TrackAdapter.OnTrackClickListener {
     }
 
     private fun openPlayer(track: Track) {
-        val intent = Intent(this, PlayerActivity::class.java).apply {
+        val intent = Intent(requireContext(), PlayerActivity::class.java).apply {
             putExtra("track", Gson().toJson(track))
         }
         startActivity(intent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

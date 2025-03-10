@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/media"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/media_background"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.example.playlistmaker.media.ui.MediaFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/media_toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/media_text_color"
         app:title="@string/media" />
 
     <com.google.android.material.tabs.TabLayout

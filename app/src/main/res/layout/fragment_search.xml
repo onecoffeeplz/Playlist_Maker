@@ -6,16 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/search_background"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.example.playlistmaker.search.ui.SearchFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/search_toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/icon_navigation"
         app:title="@string/search" />
-
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -107,7 +105,8 @@
         <Button
             android:id="@+id/clear_history_button"
             style="@style/SearchButton"
-            android:layout_marginVertical="@dimen/padding_24"
+            android:layout_marginTop="@dimen/padding_24"
+            android:layout_marginBottom="@dimen/clear_button_margin"
             android:text="@string/clear_history" />
 
     </LinearLayout>
