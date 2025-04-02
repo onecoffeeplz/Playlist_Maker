@@ -37,16 +37,19 @@ class PlayerActivity : AppCompatActivity() {
         playButton = binding.playBtn
 
         viewModel.observeState().observe(this) { state ->
+            binding.listenProgress.text = state.progress
+            playButton.isEnabled = state.isPlayButtonEnabled
+
             when (state) {
-                PlayerState.PLAYING -> {
+                is PlayerState.Playing -> {
                     playButton.setImageResource(R.drawable.ic_pause)
                 }
 
-                PlayerState.DEFAULT, PlayerState.PREPARED, PlayerState.PAUSED -> {
+                is PlayerState.Default, is PlayerState.Prepared, is PlayerState.Paused -> {
                     playButton.setImageResource(R.drawable.ic_play)
                 }
 
-                PlayerState.ERROR -> {
+                else -> {
                     playButton.setImageResource(R.drawable.ic_play)
                     Toast.makeText(this, getString(R.string.smth_wrong), Toast.LENGTH_SHORT).show()
                 }
@@ -83,8 +86,6 @@ class PlayerActivity : AppCompatActivity() {
                 .into(albumCover)
         }
 
-        observeListenProgress()
-
         playButton.setOnClickListener {
             viewModel.playbackControl()
         }
@@ -97,12 +98,6 @@ class PlayerActivity : AppCompatActivity() {
             dp,
             context.resources.displayMetrics
         ).toInt()
-    }
-
-    private fun observeListenProgress() {
-        viewModel.listenProgress.observe(this) { position ->
-            binding.listenProgress.text = position
-        }
     }
 
     override fun onPause() {

@@ -1,98 +1,85 @@
 package com.example.playlistmaker.player.presentation
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(val interactor: PlayerInteractor) : ViewModel() {
 
-    private val handler = Handler(Looper.getMainLooper())
+    private var timerJob: Job? = null
 
     private val playerState = MutableLiveData<PlayerState>()
-    private val _listenProgress = MutableLiveData<String>()
-    val listenProgress: LiveData<String> get() = _listenProgress
-
-    private var updateProgressRunnable: Runnable = object : Runnable {
-        override fun run() {
-            _listenProgress.value = interactor.currentPosition()
-            handler.postDelayed(this, TIMER_UPDATE_TIME)
-        }
-    }
-
     fun observeState(): LiveData<PlayerState> = playerState
 
     init {
-        interactor.playbackControl { state ->
-            playerState.postValue(state)
-        }
+        preparePlayer(null)
     }
 
     fun preparePlayer(url: String?) {
         if (url != null) {
-            interactor.preparePlayer(
-                url,
-                { playerState.postValue(PlayerState.PREPARED) },
-                {
-                    playerState.postValue(PlayerState.DEFAULT)
-                    handler.removeCallbacks(updateProgressRunnable)
-                    _listenProgress.value = "0:00"
-                })
+            viewModelScope.launch {
+                interactor.preparePlayer(
+                    url,
+                    { playerState.value = PlayerState.Prepared() },
+                    { playerState.value = PlayerState.Prepared() })
+            }
         } else {
-            playerState.postValue(PlayerState.ERROR)
-            handler.removeCallbacks(updateProgressRunnable)
+            playerState.value = PlayerState.Default()
         }
     }
 
     private fun onStartPlayer() {
         interactor.startPlayer()
-        handler.post(updateProgressRunnable)
-        playerState.postValue(PlayerState.PLAYING)
+        playerState.postValue(PlayerState.Playing(interactor.currentPosition()))
+        updateListenProgress()
     }
 
     fun onPausePlayer() {
         interactor.pausePlayer()
-        handler.removeCallbacks(updateProgressRunnable)
-        playerState.postValue(PlayerState.PAUSED)
+        timerJob?.cancel()
+        playerState.postValue(PlayerState.Paused(interactor.currentPosition()))
     }
 
     fun onRelease() {
-        handler.removeCallbacks(updateProgressRunnable)
         interactor.release()
+        timerJob?.cancel()
+        playerState.value = PlayerState.Default()
     }
 
-    fun playbackControl() {
-        interactor.playbackControl { state ->
-            handler.removeCallbacks(updateProgressRunnable)
-            when (state) {
-                PlayerState.PREPARED -> {
-                    handler.post(updateProgressRunnable)
-                    playerState.postValue(PlayerState.PREPARED)
-                }
-
-                PlayerState.PLAYING -> {
-                    onStartPlayer()
-                }
-
-                PlayerState.PAUSED -> {
-                    onPausePlayer()
-                }
-
-                PlayerState.ERROR -> {
-                    playerState.postValue(PlayerState.ERROR)
-                }
-
-                else -> {
-                    playerState.postValue(PlayerState.DEFAULT)
+    private fun updateListenProgress() {
+        timerJob = viewModelScope.launch {
+            while (true) {
+                delay(TIMER_UPDATE_TIME)
+                if (playerState.value is PlayerState.Playing) {
+                    playerState.postValue((PlayerState.Playing(interactor.currentPosition())))
                 }
             }
         }
     }
 
+    fun playbackControl() {
+        when (playerState.value) {
+            is PlayerState.Playing -> {
+                onPausePlayer()
+            }
+
+            is PlayerState.Prepared, is PlayerState.Paused -> {
+                onStartPlayer()
+            }
+
+            else -> {
+                playerState.postValue(PlayerState.Prepared())
+            }
+        }
+    }
+
     companion object {
-        private const val TIMER_UPDATE_TIME = 500L
+        private const val TIMER_UPDATE_TIME = 300L
     }
 }
