@@ -2,14 +2,15 @@ package com.example.playlistmaker.search.presentation
 
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.ErrorType
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.debounce
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -23,12 +24,6 @@ class SearchViewModel(
 
     private val _onTrackClickTrigger = SingleEventLiveData<Track>()
     fun onTrackClickTrigger(): LiveData<Track> = _onTrackClickTrigger
-
-    private val searchRunnable = Runnable {
-        if (userInput.isNotEmpty()) {
-            doSearch(userInput)
-        }
-    }
 
     fun observeState(): LiveData<SearchState> = searchState
 
@@ -85,39 +80,39 @@ class SearchViewModel(
         searchHistoryInteractor.checkConditionsAndAdd(track, searchHistoryTrackList)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
-
     fun clickDebounce(track: Track) {
         if (isClickAllowed) {
             isClickAllowed = false
             addTrackToHistory(track)
             _onTrackClickTrigger.value = track
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            trackClickDebounce(Unit)
         }
     }
+
+    private val trackClickDebounce =
+        debounce<Unit>(CLICK_DEBOUNCE_DELAY, viewModelScope, false) {
+            isClickAllowed = true
+        }
 
     fun searchDebounce(changedText: String) {
         if (userInput == changedText) return
         userInput = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(searchRunnable, SEARCH_REQUEST_TOKEN, postTime)
+        trackSearchDebounce(changedText)
     }
 
     fun researchDebounce() {
         if (userInput.isNotEmpty()) {
-            handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-            val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-            handler.postAtTime(searchRunnable, SEARCH_REQUEST_TOKEN, postTime)
+            trackSearchDebounce(userInput)
         }
     }
+
+    private val trackSearchDebounce =
+        debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
+            doSearch(changedText)
+        }
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1_000L
         private const val SEARCH_DEBOUNCE_DELAY = 2_000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
 }
