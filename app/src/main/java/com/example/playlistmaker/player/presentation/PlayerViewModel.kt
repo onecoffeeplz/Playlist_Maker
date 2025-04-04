@@ -53,6 +53,7 @@ class PlayerViewModel(val interactor: PlayerInteractor) : ViewModel() {
     }
 
     private fun updateListenProgress() {
+        timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (true) {
                 delay(TIMER_UPDATE_TIME)
