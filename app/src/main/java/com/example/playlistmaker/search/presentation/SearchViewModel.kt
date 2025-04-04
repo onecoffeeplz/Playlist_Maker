@@ -1,7 +1,5 @@
 package com.example.playlistmaker.search.presentation
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,7 +17,6 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
     private val searchState = MutableLiveData<SearchState>()
     private var userInput: String = ""
 
