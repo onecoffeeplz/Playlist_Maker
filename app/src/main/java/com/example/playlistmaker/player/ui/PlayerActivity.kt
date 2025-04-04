@@ -37,8 +37,8 @@ class PlayerActivity : AppCompatActivity() {
         playButton = binding.playBtn
 
         viewModel.observeState().observe(this) { state ->
-            binding.listenProgress.text = state.progress
-            playButton.isEnabled = state.isPlayButtonEnabled
+            binding.listenProgress.text = state.progressText
+            playButton.isEnabled = state !is PlayerState.Default
 
             when (state) {
                 is PlayerState.Playing -> {
