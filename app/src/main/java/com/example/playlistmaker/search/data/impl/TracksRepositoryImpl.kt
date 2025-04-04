@@ -7,15 +7,17 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.domain.models.ErrorType
 import com.example.playlistmaker.search.domain.models.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
 
-    override fun search(expression: String): Resource<List<Track>> {
-        return try {
-            val response = networkClient.doRequest(TracksSearchRequest(expression))
+    override fun search(expression: String): Flow<Resource<List<Track>>> = flow {
+        val response = networkClient.doRequest(TracksSearchRequest(expression))
+        try {
             when (response.responseCode) {
                 200 -> {
-                    Resource.Success((response as TracksSearchResponse).results.map {
+                    emit(Resource.Success((response as TracksSearchResponse).results.map {
                         Track(
                             it.trackId,
                             it.trackName,
@@ -28,23 +30,23 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                             it.country,
                             it.previewUrl
                         )
-                    })
+                    }))
                 }
 
                 404 -> {
-                    Resource.Error(ErrorType.NOTHING_FOUND)
+                    emit(Resource.Error(ErrorType.NOTHING_FOUND))
                 }
 
-                500, 502, 503 -> {
-                    Resource.Error(ErrorType.SERVER_ERROR)
+                500 -> {
+                    emit(Resource.Error(ErrorType.SERVER_ERROR))
                 }
 
                 else -> {
-                    Resource.Error(ErrorType.NO_CONNECTION)
+                    emit(Resource.Error(ErrorType.NO_CONNECTION))
                 }
             }
         } catch (e: Exception) {
-            Resource.Error(ErrorType.NO_CONNECTION)
+            emit(Resource.Error(ErrorType.NO_CONNECTION))
         }
     }
 }
