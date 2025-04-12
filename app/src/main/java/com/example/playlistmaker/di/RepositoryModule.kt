@@ -1,6 +1,8 @@
 package com.example.playlistmaker.di
 
 import com.example.playlistmaker.media.data.converters.FavoritesDbConverter
+import com.example.playlistmaker.media.data.impl.FavoritesRepositoryImpl
+import com.example.playlistmaker.media.domain.db.FavoritesRepository
 import com.example.playlistmaker.player.data.impl.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.search.data.impl.SearchHistoryRepositoryImpl
@@ -42,5 +44,9 @@ val repositoryModule = module {
     }
 
     factory { FavoritesDbConverter() }
+
+    single<FavoritesRepository> {
+        FavoritesRepositoryImpl(appDatabase = get(), favoritesDbConverter = get())
+    }
 
 }

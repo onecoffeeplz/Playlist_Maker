@@ -1,12 +1,11 @@
 package com.example.playlistmaker.media.data.converters
 
 import com.example.playlistmaker.media.data.db.entity.FavoritesEntity
-import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.domain.models.Track
 
 
 class FavoritesDbConverter {
-    fun map(track: TrackDto): FavoritesEntity {
+    fun map(track: Track): FavoritesEntity {
         return FavoritesEntity(
             track.trackId,
             track.trackName,
