@@ -23,7 +23,7 @@ val viewModelModule = module {
     }
 
     viewModel<FavoritesViewModel> {
-        FavoritesViewModel()
+        FavoritesViewModel(favoritesInteractor = get())
     }
 
     viewModel<PlaylistsViewModel> {
