@@ -89,6 +89,11 @@ class FavoritesFragment : Fragment(), FavoritesAdapter.OnTrackClickListener {
         startActivity(intent)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getTracksFromFavorites()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
