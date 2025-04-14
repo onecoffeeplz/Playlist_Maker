@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.player.domain.model.PlayerState
+import com.example.playlistmaker.player.domain.model.PlayerScreenState
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
@@ -38,14 +38,15 @@ class PlayerActivity : AppCompatActivity() {
 
         viewModel.observeState().observe(this) { state ->
             binding.listenProgress.text = state.progressText
-            playButton.isEnabled = state !is PlayerState.Default
+            playButton.isEnabled = state !is PlayerScreenState.Default
+            setFavoriteButton(state.isTrackFavorite)
 
             when (state) {
-                is PlayerState.Playing -> {
+                is PlayerScreenState.Playing -> {
                     playButton.setImageResource(R.drawable.ic_pause)
                 }
 
-                is PlayerState.Default, is PlayerState.Prepared, is PlayerState.Paused -> {
+                is PlayerScreenState.Default, is PlayerScreenState.Prepared, is PlayerScreenState.Paused -> {
                     playButton.setImageResource(R.drawable.ic_play)
                 }
 
@@ -63,7 +64,7 @@ class PlayerActivity : AppCompatActivity() {
         val jsonTrack = intent.getStringExtra("track")
         val track = Gson().fromJson(jsonTrack, Track::class.java)
         url = track.previewUrl
-        viewModel.preparePlayer(url)
+        viewModel.preparePlayer(url, track)
 
         with(binding) {
             trackName.text = track.trackName
@@ -90,6 +91,18 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.playbackControl()
         }
 
+        binding.favoritesBtn.setOnClickListener {
+            viewModel.onFavoriteClicked(track)
+        }
+
+    }
+
+    private fun setFavoriteButton(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.favoritesBtn.setImageResource(R.drawable.fab_favorites_enable)
+        } else {
+            binding.favoritesBtn.setImageResource(R.drawable.fab_favorites)
+        }
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {
