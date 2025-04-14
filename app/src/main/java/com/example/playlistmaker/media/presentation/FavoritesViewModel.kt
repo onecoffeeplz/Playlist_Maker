@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.db.FavoritesInteractor
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.presentation.SingleEventLiveData
+import com.example.playlistmaker.utils.SingleEventLiveData
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.launch
 

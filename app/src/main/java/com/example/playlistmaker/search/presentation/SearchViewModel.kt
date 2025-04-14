@@ -8,6 +8,7 @@ import com.example.playlistmaker.search.domain.api.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.ErrorType
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.SingleEventLiveData
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.launch
 
