@@ -5,9 +5,8 @@
     android:id="@+id/new_playlist"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true"
     android:paddingBottom="@dimen/height_32"
+    android:fillViewport="true"
     android:background="@color/playlist_background"
     tools:context=".media.ui.NewPlaylistFragment">
 
@@ -111,11 +110,12 @@
             style="@style/CreateButton"
             android:layout_width="0dp"
             android:layout_height="44dp"
-            android:layout_gravity="bottom"
+            android:layout_marginTop="@dimen/padding_16"
             android:background="@drawable/btn_selector"
             android:enabled="false"
             android:clickable="true"
             android:text="@string/create"
+            app:layout_constraintTop_toBottomOf="@id/playlist_description_input"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guideline_right_16"
             app:layout_constraintStart_toStartOf="@id/guideline_left_16" />

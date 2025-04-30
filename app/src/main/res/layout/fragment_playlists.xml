@@ -6,7 +6,7 @@
     tools:context=".media.ui.PlaylistsFragment">
 
     <Button
-        android:id="@+id/reload_button"
+        android:id="@+id/create_playlist"
         style="@style/SearchButton"
         android:layout_marginTop="24dp"
         android:text="@string/new_playlist" />
