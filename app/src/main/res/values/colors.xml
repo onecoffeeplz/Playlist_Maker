@@ -14,6 +14,7 @@
     <color name="search_background">#FFFFFF</color>
     <color name="searchbar_background">#E6E8EB</color>
     <color name="player_background">#FFFFFF</color>
+    <color name="playlist_background">#FFFFFF</color>
     <color name="switch_thumb_color">#AEAFB4</color>
     <color name="switch_track_color">#E6E8EB</color>
     <color name="player_text_color">#1A1B22</color>
@@ -22,4 +23,5 @@
     <color name="progress_bar_color">#3772E7</color>
     <color name="color_selected">#3772E7</color>
     <color name="color_unselected">#1A1B22</color>
+    <color name="yp_gray">#AEAFB4</color>
 </resources>
