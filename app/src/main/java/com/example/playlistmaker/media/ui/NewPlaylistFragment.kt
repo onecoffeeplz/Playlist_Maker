@@ -1,6 +1,8 @@
 package com.example.playlistmaker.media.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +36,16 @@ class NewPlaylistFragment : Fragment() {
         binding.newPlaylistToolbar.setNavigationOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
+
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                binding.playlistCreate.isEnabled = s?.isNotEmpty() ?: false
+            }
+        }
+        binding.playlistName.addTextChangedListener(textWatcher)
+
     }
 
     override fun onDestroyView() {
