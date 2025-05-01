@@ -11,7 +11,7 @@ import androidx.core.net.toUri
 import com.example.playlistmaker.media.data.converters.PlaylistDbConverter
 import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.media.data.db.entity.PlaylistEntity
-import com.example.playlistmaker.media.domain.db.PlaylistRepository
+import com.example.playlistmaker.media.domain.db.NewPlaylistRepository
 import com.example.playlistmaker.media.domain.models.Playlist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -20,11 +20,11 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
-class PlaylistRepositoryImpl(
+class NewNewPlaylistRepositoryImpl(
     private val context: Context,
     private val appDatabase: AppDatabase,
     private val playlistDbConverter: PlaylistDbConverter
-) : PlaylistRepository {
+) : NewPlaylistRepository {
     override suspend fun createPlaylist(playlist: Playlist) {
         val playlistEntity = playlistDbConverter.map(playlist)
         appDatabase.playlistDao().createPlaylist(playlistEntity)
