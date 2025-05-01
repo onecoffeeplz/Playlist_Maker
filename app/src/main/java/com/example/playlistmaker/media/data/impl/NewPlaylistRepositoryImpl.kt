@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
-class NewNewPlaylistRepositoryImpl(
+class NewPlaylistRepositoryImpl(
     private val context: Context,
     private val appDatabase: AppDatabase,
     private val playlistDbConverter: PlaylistDbConverter

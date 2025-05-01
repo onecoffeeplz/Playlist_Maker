@@ -3,7 +3,7 @@ package com.example.playlistmaker.di
 import com.example.playlistmaker.media.data.converters.FavoritesDbConverter
 import com.example.playlistmaker.media.data.converters.PlaylistDbConverter
 import com.example.playlistmaker.media.data.impl.FavoritesRepositoryImpl
-import com.example.playlistmaker.media.data.impl.NewNewPlaylistRepositoryImpl
+import com.example.playlistmaker.media.data.impl.NewPlaylistRepositoryImpl
 import com.example.playlistmaker.media.domain.db.FavoritesRepository
 import com.example.playlistmaker.media.domain.db.NewPlaylistRepository
 import com.example.playlistmaker.player.data.impl.PlayerRepositoryImpl
@@ -55,6 +55,6 @@ val repositoryModule = module {
     factory { PlaylistDbConverter() }
 
     single<NewPlaylistRepository> {
-        NewNewPlaylistRepositoryImpl(context = get(), appDatabase = get(), playlistDbConverter = get())
+        NewPlaylistRepositoryImpl(context = get(), appDatabase = get(), playlistDbConverter = get())
     }
 }

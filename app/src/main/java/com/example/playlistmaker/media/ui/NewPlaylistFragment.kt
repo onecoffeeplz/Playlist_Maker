@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,7 +15,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewPlaylistFragment : Fragment() {
 
@@ -25,10 +28,7 @@ class NewPlaylistFragment : Fragment() {
 
     private var uri: Uri? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // TODO: Use the ViewModel
-    }
+    private val viewModel by viewModel<NewPlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,6 +73,16 @@ class NewPlaylistFragment : Fragment() {
                     handleBackPressed()
                 }
             })
+
+        binding.playlistCreate.setOnClickListener{
+            viewModel.createPlaylist(
+                binding.playlistName.text.toString(),
+                binding.playlistDescription.text.toString(),
+                uri?.toString()
+            )
+            findNavController().popBackStack()
+            showToast(binding.playlistName.text.toString())
+        }
     }
 
     private fun showExitConfirmationDialog() {
@@ -98,6 +108,14 @@ class NewPlaylistFragment : Fragment() {
         } else {
             findNavController().navigateUp()
         }
+    }
+
+    private fun showToast(playlistName: String) {
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.playlist_created, playlistName),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onDestroyView() {

@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaPlayer
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.search.data.network.ITunesAPI
 import com.example.playlistmaker.search.data.network.NetworkClient
@@ -42,10 +44,16 @@ val dataModule = module {
     }
 
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "pm_database.db").build()
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "pm_database.db")
+            .addMigrations(
+                MIGRATION_1_2
+            ).build()
     }
 
 }
 
-
-
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("CREATE TABLE playlists (playlistId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, playlistName TEXT NOT NULL, playlistDescription TEXT, playlistCoverUri TEXT, tracksIds TEXT, tracksCount INTEGER NOT NULL DEFAULT 0)")
+    }
+}
