@@ -45,6 +45,16 @@ class NewPlaylistFragment : Fragment() {
             handleBackPressed()
         }
 
+        viewModel.playlistCreationStatus.observe(viewLifecycleOwner) { result ->
+            result.onSuccess {
+                showToast(binding.playlistName.text.toString())
+                findNavController().popBackStack()
+            }.onFailure { exception ->
+                Toast.makeText(requireContext(),
+                    getString(R.string.error_toast, exception.message), Toast.LENGTH_SHORT).show()
+            }
+        }
+
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -80,8 +90,6 @@ class NewPlaylistFragment : Fragment() {
                 binding.playlistDescription.text.toString(),
                 uri?.toString()
             )
-            findNavController().popBackStack()
-            showToast(binding.playlistName.text.toString())
         }
     }
 

@@ -20,7 +20,7 @@ class NewPlaylistInteractorImpl(
         return newPlaylistRepository.getPlaylists()
     }
 
-    override suspend fun copyPlaylistCoverToLocalStorage(uri: String): String {
+    override fun copyPlaylistCoverToLocalStorage(uri: String): String {
         return newPlaylistRepository.copyPlaylistCoverToLocalStorage(uri)
     }
 }

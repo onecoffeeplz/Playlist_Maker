@@ -13,10 +13,8 @@ import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.media.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.media.domain.db.NewPlaylistRepository
 import com.example.playlistmaker.media.domain.models.Playlist
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
@@ -26,8 +24,12 @@ class NewPlaylistRepositoryImpl(
     private val playlistDbConverter: PlaylistDbConverter
 ) : NewPlaylistRepository {
     override suspend fun createPlaylist(playlist: Playlist) {
-        val playlistEntity = playlistDbConverter.map(playlist)
-        appDatabase.playlistDao().createPlaylist(playlistEntity)
+        try {
+            val playlistEntity = playlistDbConverter.map(playlist)
+            appDatabase.playlistDao().createPlaylist(playlistEntity)
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
@@ -38,33 +40,34 @@ class NewPlaylistRepositoryImpl(
     override suspend fun getPlaylists(): Flow<List<Playlist>> =
         appDatabase.playlistDao().getPlaylists().map { convertFromPlaylistEntity(it) }
 
-    override suspend fun copyPlaylistCoverToLocalStorage(uri: String): String {
-        return withContext(Dispatchers.IO) {
-            val originalFileName = getFileNameFromUri(Uri.parse(uri), context)
+    override fun copyPlaylistCoverToLocalStorage(uri: String): String {
+        val originalFileName = getFileNameFromUri(Uri.parse(uri), context)
 
-            val filePath = File(
-                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                PLAYLISTS_COVER_DIR
-            )
+        val filePath = File(
+            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            PLAYLISTS_COVER_DIR
+        )
 
-            if (!filePath.exists()) {
-                filePath.mkdirs()
-            }
+        if (!filePath.exists()) {
+            filePath.mkdirs()
+        }
 
-            val timestampString = System.currentTimeMillis().toString()
-            val file = File(filePath, originalFileName ?: "$timestampString.jpg")
+        val timestampString = System.currentTimeMillis().toString()
+        val file = File(filePath, originalFileName ?: "$timestampString.jpg")
 
-            val inputStream = context.contentResolver.openInputStream(uri.toUri())
-            val outputStream = FileOutputStream(file)
+        val inputStream = context.contentResolver.openInputStream(uri.toUri())
+        val outputStream = FileOutputStream(file)
+
+        try {
             BitmapFactory
                 .decodeStream(inputStream)
                 .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
-
+        } finally {
             inputStream?.close()
             outputStream.close()
-
-            return@withContext file.toUri().toString()
         }
+
+        return file.toUri().toString()
     }
 
     private fun getFileNameFromUri(uri: Uri, context: Context): String? {

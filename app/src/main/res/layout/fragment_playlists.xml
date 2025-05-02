@@ -16,34 +16,55 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <FrameLayout
+    <LinearLayout
+        android:id="@+id/playlist_empty"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="46dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/create_playlist"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/create_playlist">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@string/empty_playlists"
-            android:paddingTop="106dp"
             android:src="@drawable/ic_nothing_found" />
 
         <TextView
             style="@style/SearchAdditionalInfo"
-            android:paddingTop="242dp"
+            android:layout_marginTop="@dimen/padding_16"
             android:text="@string/empty_playlists" />
 
-    </FrameLayout>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/pb_size"
+        android:layout_height="@dimen/pb_size"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_marginTop="@dimen/padding_98"
+        android:indeterminateTint="@color/progress_bar_color"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_playlist" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_playlists"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="76dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_16"
+        android:layout_weight="1"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/create_playlist" />
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_playlist"
+        app:spanCount="2"
+        tools:itemCount="6"
+        tools:listitem="@layout/playlist_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

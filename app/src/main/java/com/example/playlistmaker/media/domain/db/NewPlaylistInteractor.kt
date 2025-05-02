@@ -7,5 +7,5 @@ interface NewPlaylistInteractor {
     suspend fun createPlaylist(playlist: Playlist)
     suspend fun updatePlaylist(playlist: Playlist)
     suspend fun getPlaylists(): Flow<List<Playlist>>
-    suspend fun copyPlaylistCoverToLocalStorage(uri: String): String
+    fun copyPlaylistCoverToLocalStorage(uri: String): String
 }

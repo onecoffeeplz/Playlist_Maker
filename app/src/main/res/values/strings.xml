@@ -44,4 +44,6 @@
     <string name="playlist_dialog_finish">Завершить</string>
     <string name="playlist_dialog_cancel">Отмена</string>
     <string name="playlist_created">Плейлист %1$s создан</string>
+    <string name="todo">клик =)</string>
+    <string name="error_toast">Ошибка: %1$s</string>
 </resources>
