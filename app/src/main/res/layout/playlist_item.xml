@@ -15,14 +15,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/playlist_cover"
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@string/album_cover_image"
             android:scaleType="centerCrop"
-            app:cornerRadius="@dimen/et_corner_radius"
+            app:shapeAppearanceOverlay="@style/RoundedImageView"
             app:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintDimensionRatio="1:1"
             card_view:layout_constraintStart_toStartOf="parent"
