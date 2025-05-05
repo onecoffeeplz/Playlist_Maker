@@ -13,6 +13,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.media.domain.models.Playlist
+import com.example.playlistmaker.media.ui.NewPlaylistFragment
 import com.example.playlistmaker.player.domain.model.PlayerScreenState
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
@@ -85,10 +86,6 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.OnPlaylistClickLi
                     playButton.setImageResource(R.drawable.ic_play)
                 }
 
-//                is PlayerScreenState.ShowToast -> {
-//                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
-//                }
-
                 else -> {
                     playButton.setImageResource(R.drawable.ic_play)
                     Toast.makeText(this, getString(R.string.smth_wrong), Toast.LENGTH_SHORT).show()
@@ -99,10 +96,10 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.OnPlaylistClickLi
         viewModel.onTrackAddTrigger().observe(this) { (isAdded, playlistName) ->
             if (isAdded) {
                 Toast.makeText(this, getString(R.string.track_added_to_playlist, playlistName), Toast.LENGTH_SHORT).show()
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             } else {
                 Toast.makeText(this, getString(R.string.track_was_in_playlist, playlistName), Toast.LENGTH_SHORT).show()
             }
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         binding.mediaToolbar.setNavigationOnClickListener {
@@ -146,11 +143,11 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.OnPlaylistClickLi
         binding.rvPlaylists.layoutManager = LinearLayoutManager(this)
         binding.rvPlaylists.adapter = playlistsAdapter
 
-//        binding.createPlaylist.setOnClickListener {
-////            findNavController().navigate(R.id.newPlaylistFragment)
-//            // TODO
-//        }
-
+        binding.createPlaylist.setOnClickListener {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.player, NewPlaylistFragment())
+                .commit()
+        }
     }
 
     private fun setFavoriteButton(isFavorite: Boolean) {

@@ -46,7 +46,11 @@
         android:id="@+id/newPlaylistFragment"
         android:name="com.example.playlistmaker.media.ui.NewPlaylistFragment"
         android:label="fragment_new_playlist"
-        tools:layout="@layout/fragment_new_playlist" />
+        tools:layout="@layout/fragment_new_playlist" >
+        <action
+            android:id="@+id/action_newPlaylistFragment_to_playerActivity2"
+            app:destination="@id/playerActivity" />
+    </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.playlistmaker.media.ui.FavoritesFragment"
