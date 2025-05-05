@@ -1,15 +1,16 @@
 package com.example.playlistmaker.media.ui
 
+import android.content.Context
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.media.domain.models.Playlist
-import java.text.NumberFormat
-import java.util.Locale
 
 class PlaylistsViewHolder(private val binding: PlaylistItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
+
+    private val context: Context = itemView.context
 
     fun bind(item: Playlist) {
         with(binding) {
@@ -19,12 +20,15 @@ class PlaylistsViewHolder(private val binding: PlaylistItemBinding) :
                 playlistCover.setImageResource(R.drawable.ic_placeholder)
             }
             playlistName.text = item.playlistName
-            playlistTracksCount.text = convertIntToStringWithLocale(item.tracksCount)
+            playlistTracksCount.text = getCorrectTracksName(item.tracksCount)
         }
     }
 
-    private fun convertIntToStringWithLocale(intValue: Int): String {
-        val numberFormat = NumberFormat.getInstance(Locale.getDefault())
-        return numberFormat.format(intValue)
+    private fun getCorrectTracksName(count: Int): String {
+        return when {
+            count % 10 == 1 && count % 100 != 11 -> "$count ${context.getString(R.string.tracks_one)}"
+            count % 10 in 2..4 && (count % 100 < 12 || count % 100 > 14) -> "$count ${context.getString(R.string.tracks_2_3_4)}"
+            else -> "$count ${context.getString(R.string.tracks_other)}"
+        }
     }
 }

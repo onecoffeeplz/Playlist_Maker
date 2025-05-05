@@ -55,14 +55,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_playlists"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/padding_16"
-        android:layout_weight="1"
         android:visibility="gone"
+        android:layout_marginBottom="@dimen/toolbar_height"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/create_playlist"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:spanCount="2"
         tools:itemCount="6"
         tools:listitem="@layout/playlist_item" />

@@ -46,16 +46,7 @@
             android:layout_height="@dimen/padding_16"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@id/playlist_name"
-            tools:text="777" />
-
-        <TextView
-            android:id="@+id/playlist_tracks"
-            style="@style/PlaylistCVText"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/padding_16"
-            card_view:layout_constraintStart_toEndOf="@id/playlist_tracks_count"
-            card_view:layout_constraintTop_toBottomOf="@id/playlist_name"
-            android:text="@string/tracks" />
+            tools:text="777 треков" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
