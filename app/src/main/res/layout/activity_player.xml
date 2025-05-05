@@ -226,12 +226,13 @@
         android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#99000000" />
+        android:background="#99000000"
+        android:visibility="gone" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/playlists_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/bottom_sheet"
         android:orientation="horizontal"
         app:behavior_hideable="true"

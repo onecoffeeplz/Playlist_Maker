@@ -92,10 +92,15 @@ class PlaylistRepositoryImpl(
             }
 
             playlistEntity.tracksIds = updatedTracksIds
-            playlistEntity.tracksCount = updatedTracksIds.length
+            playlistEntity.tracksCount = countTracks(updatedTracksIds)
             appDatabase.playlistDao().updatePlaylist(playlistEntity)
             return true
         }
+    }
+
+    private fun countTracks(tracksIds: String): Int {
+        val ids = tracksIds.split(",").map { it.trim() }. filter { it.isNotEmpty() }
+        return ids.size
     }
 
     private fun getFileNameFromUri(uri: Uri, context: Context): String? {
