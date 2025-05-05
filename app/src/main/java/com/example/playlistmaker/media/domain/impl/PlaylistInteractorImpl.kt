@@ -3,6 +3,7 @@ package com.example.playlistmaker.media.domain.impl
 import com.example.playlistmaker.media.domain.db.PlaylistInteractor
 import com.example.playlistmaker.media.domain.db.PlaylistRepository
 import com.example.playlistmaker.media.domain.models.Playlist
+import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractorImpl(
@@ -22,5 +23,9 @@ class PlaylistInteractorImpl(
 
     override fun copyPlaylistCoverToLocalStorage(uri: String): String {
         return playlistRepository.copyPlaylistCoverToLocalStorage(uri)
+    }
+
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean {
+        return playlistRepository.addTrackToPlaylist(track, playlist)
     }
 }

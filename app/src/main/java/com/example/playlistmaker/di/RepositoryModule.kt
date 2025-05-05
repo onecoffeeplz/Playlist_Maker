@@ -56,7 +56,7 @@ val repositoryModule = module {
     factory { PlaylistDbConverter() }
 
     single<PlaylistRepository> {
-        PlaylistRepositoryImpl(context = get(), appDatabase = get(), playlistDbConverter = get())
+        PlaylistRepositoryImpl(context = get(), appDatabase = get(), playlistDbConverter = get(), trackDbConverter = get())
     }
 
     factory { TrackDbConverter() }

@@ -9,10 +9,12 @@ import android.os.Environment
 import android.provider.OpenableColumns
 import androidx.core.net.toUri
 import com.example.playlistmaker.media.data.converters.PlaylistDbConverter
+import com.example.playlistmaker.media.data.converters.TrackDbConverter
 import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.media.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.media.domain.db.PlaylistRepository
 import com.example.playlistmaker.media.domain.models.Playlist
+import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
@@ -21,7 +23,8 @@ import java.io.FileOutputStream
 class PlaylistRepositoryImpl(
     private val context: Context,
     private val appDatabase: AppDatabase,
-    private val playlistDbConverter: PlaylistDbConverter
+    private val playlistDbConverter: PlaylistDbConverter,
+    private val trackDbConverter: TrackDbConverter
 ) : PlaylistRepository {
     override suspend fun createPlaylist(playlist: Playlist) {
         try {
@@ -68,6 +71,31 @@ class PlaylistRepositoryImpl(
         }
 
         return file.toUri().toString()
+    }
+
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean {
+        val trackEntity = trackDbConverter.map(track)
+        val playlistEntity = playlistDbConverter.map(playlist)
+
+        appDatabase.playlistDao().addTrack(trackEntity)
+
+        val trackIdsList = playlistEntity.tracksIds?.split(",")?.map {it.trim()} ?: emptyList()
+        val trackInList = trackIdsList.contains(trackEntity.trackId.toString())
+
+        if (trackInList) {
+            return false
+        } else {
+            val updatedTracksIds = if (playlistEntity.tracksIds.isNullOrEmpty()) {
+                trackEntity.trackId.toString()
+            } else {
+                "${playlistEntity.tracksIds},${trackEntity.trackId}"
+            }
+
+            playlistEntity.tracksIds = updatedTracksIds
+            playlistEntity.tracksCount = updatedTracksIds.length
+            appDatabase.playlistDao().updatePlaylist(playlistEntity)
+            return true
+        }
     }
 
     private fun getFileNameFromUri(uri: Uri, context: Context): String? {

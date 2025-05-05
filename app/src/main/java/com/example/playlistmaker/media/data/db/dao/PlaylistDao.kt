@@ -15,7 +15,7 @@ interface PlaylistDao {
     suspend fun createPlaylist(playlist: PlaylistEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addTrackToPlaylist(track: TrackEntity)
+    suspend fun addTrack(track: TrackEntity)
 
     @Update
     suspend fun updatePlaylist(playlist: PlaylistEntity)
