@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.media.domain.db.NewPlaylistInteractor
+import com.example.playlistmaker.media.domain.db.PlaylistInteractor
 import com.example.playlistmaker.media.domain.models.Playlist
 import kotlinx.coroutines.launch
 
-class NewPlaylistViewModel(private val newPlaylistInteractor: NewPlaylistInteractor) : ViewModel() {
+class NewPlaylistViewModel(private val newPlaylistInteractor: PlaylistInteractor) : ViewModel() {
 
     private val _playlistCreationStatus = MutableLiveData<Result<Unit>>()
     val playlistCreationStatus: LiveData<Result<Unit>> get() = _playlistCreationStatus
