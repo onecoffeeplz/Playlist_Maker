@@ -36,9 +36,25 @@ class PlayerViewModel(
         viewModelScope.launch {
             playlistInteractor.getPlaylists().collect { playlists ->
                 processResult(playlists)
-                playerScreenState.postValue(
-                    PlayerScreenState.Prepared(isFavorite, savedPlaylists)
-                )
+                val newState = when (val currentState = playerScreenState.value) {
+                    is PlayerScreenState.Playing -> PlayerScreenState.Playing(
+                        currentState.progressText,
+                        isFavorite,
+                        savedPlaylists
+                    )
+
+                    is PlayerScreenState.Paused -> PlayerScreenState.Paused(
+                        currentState.progressText,
+                        isFavorite,
+                        savedPlaylists
+                    )
+
+                    else -> PlayerScreenState.Prepared(
+                        isFavorite,
+                        savedPlaylists
+                    )
+                }
+                playerScreenState.postValue(newState)
             }
         }
     }
