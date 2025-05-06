@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.playlistmaker.player.ui.PlayerActivity">
+    tools:context=".player.ui.PlayerFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -233,7 +233,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/playlists_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/bottom_sheet"
         android:orientation="horizontal"
         app:behavior_hideable="true"
@@ -247,7 +247,7 @@
             android:background="@drawable/bottom_sheet_decor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/bottom_sheet_text"
@@ -274,9 +274,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/padding_24"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/create_playlist"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:itemCount="3"
             tools:listitem="@layout/playlist_item_oneline" />
 

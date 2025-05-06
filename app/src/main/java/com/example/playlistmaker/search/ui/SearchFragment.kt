@@ -1,7 +1,6 @@
 package com.example.playlistmaker.search.ui
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,9 +11,11 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.models.ErrorType
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchState
@@ -195,10 +196,12 @@ class SearchFragment : Fragment(), TrackAdapter.OnTrackClickListener {
     }
 
     private fun openPlayer(track: Track) {
-        val intent = Intent(requireContext(), PlayerActivity::class.java).apply {
-            putExtra("track", Gson().toJson(track))
+        val bundle = Bundle().apply {
+            putString("track", Gson().toJson(track))
         }
-        startActivity(intent)
+        val playerFragment = PlayerFragment()
+        playerFragment.arguments = bundle
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
     }
 
     override fun onDestroyView() {

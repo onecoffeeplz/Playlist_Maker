@@ -3,17 +3,19 @@ package com.example.playlistmaker.player.ui
 import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.media.domain.models.Playlist
-import com.example.playlistmaker.media.ui.NewPlaylistFragment
 import com.example.playlistmaker.player.domain.model.PlayerScreenState
 import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
@@ -23,11 +25,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.OnPlaylistClickListener {
-    private var _binding: ActivityPlayerBinding? = null
+class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
+    private var _binding: FragmentPlayerBinding? = null
     private val binding
         get() = _binding
-            ?: throw IllegalStateException("Binding for ActivityPlayerBinding must not be null!")
+            ?: throw IllegalStateException("Binding for FragmentPlayerBinding must not be null!")
 
     private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var playButton: ImageButton
@@ -37,10 +39,14 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.OnPlaylistClickLi
     private val playlists: MutableList<Playlist> = mutableListOf()
     private val playlistsAdapter = BottomSheetAdapter(playlists, this)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         playButton = binding.playBtn
 
@@ -68,7 +74,7 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.OnPlaylistClickLi
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        viewModel.observeState().observe(this) { state ->
+        viewModel.observeState().observe(viewLifecycleOwner) { state ->
             binding.listenProgress.text = state.progressText
             playButton.isEnabled = state !is PlayerScreenState.Default
             setFavoriteButton(state.isTrackFavorite)
@@ -88,25 +94,25 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.OnPlaylistClickLi
 
                 else -> {
                     playButton.setImageResource(R.drawable.ic_play)
-                    Toast.makeText(this, getString(R.string.smth_wrong), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.smth_wrong), Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        viewModel.onTrackAddTrigger().observe(this) { (isAdded, playlistName) ->
+        viewModel.onTrackAddTrigger().observe(viewLifecycleOwner) { (isAdded, playlistName) ->
             if (isAdded) {
-                Toast.makeText(this, getString(R.string.track_added_to_playlist, playlistName), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.track_added_to_playlist, playlistName), Toast.LENGTH_SHORT).show()
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             } else {
-                Toast.makeText(this, getString(R.string.track_was_in_playlist, playlistName), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.track_was_in_playlist, playlistName), Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.mediaToolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            findNavController().popBackStack()
         }
 
-        val jsonTrack = intent.getStringExtra("track")
+        val jsonTrack = arguments?.getString("track")
         track = Gson().fromJson(jsonTrack, Track::class.java)
         url = track.previewUrl
         viewModel.preparePlayer(url, track)
@@ -140,13 +146,11 @@ class PlayerActivity : AppCompatActivity(), BottomSheetAdapter.OnPlaylistClickLi
             viewModel.onFavoriteClicked(track)
         }
 
-        binding.rvPlaylists.layoutManager = LinearLayoutManager(this)
+        binding.rvPlaylists.layoutManager = LinearLayoutManager(requireContext())
         binding.rvPlaylists.adapter = playlistsAdapter
 
         binding.createPlaylist.setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.player, NewPlaylistFragment())
-                .commit()
+            findNavController().navigate(R.id.action_playerFragment_to_newPlaylistFragment)
         }
     }
 
