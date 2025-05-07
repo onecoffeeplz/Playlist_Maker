@@ -176,9 +176,10 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
         viewModel.onPausePlayer()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         viewModel.onRelease()
+        _binding = null
     }
 
     override fun onPlaylistClick(playlist: Playlist) {
