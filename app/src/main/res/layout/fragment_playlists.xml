@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".media.ui.PlaylistsFragment">
+    tools:context=".media.ui.PlaylistsFragment"
+    android:background="@color/media_background">
 
     <Button
         android:id="@+id/create_playlist"
