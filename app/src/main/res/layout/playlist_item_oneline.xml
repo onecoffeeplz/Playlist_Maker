@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/track_item_height"
+    android:orientation="horizontal"
+    android:paddingHorizontal="@dimen/padding_12"
+    android:paddingVertical="@dimen/padding_8">
+
+    <ImageView
+        android:id="@+id/playlist_cover"
+        android:layout_width="@dimen/album_cover"
+        android:layout_height="@dimen/album_cover"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:contentDescription="@string/album_cover_image"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/ic_placeholder" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/padding_8">
+
+        <TextView
+            android:id="@+id/playlist_name"
+            style="@style/SearchResultTrackName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:ellipsize="end"
+            android:lines="1"
+            android:paddingTop="@dimen/padding_6"
+            tools:text="Playlist name" />
+
+        <TextView
+            android:id="@+id/playlist_tracks_count"
+            style="@style/SearchResultArtist"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/padding_12"
+            android:layout_gravity="top"
+            android:ellipsize="end"
+            android:lines="1"
+            tools:text="777 треков" />
+
+    </LinearLayout>
+
+</LinearLayout>

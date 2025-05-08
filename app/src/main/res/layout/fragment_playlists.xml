@@ -1,27 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".media.ui.PlaylistsFragment">
+    tools:context=".media.ui.PlaylistsFragment"
+    android:background="@color/media_background">
 
     <Button
-        android:id="@+id/reload_button"
+        android:id="@+id/create_playlist"
         style="@style/SearchButton"
         android:layout_marginTop="24dp"
-        android:text="@string/new_playlist" />
+        android:text="@string/new_playlist"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="106dp"
-        android:contentDescription="@string/empty_playlists"
-        android:src="@drawable/ic_nothing_found" />
 
-    <TextView
-        style="@style/SearchAdditionalInfo"
-        android:paddingTop="242dp"
-        android:text="@string/empty_playlists" />
+    <LinearLayout
+        android:id="@+id/playlist_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="46dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_playlist">
 
-</FrameLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/empty_playlists"
+            android:src="@drawable/ic_nothing_found" />
+
+        <TextView
+            style="@style/SearchAdditionalInfo"
+            android:layout_marginTop="@dimen/padding_16"
+            android:text="@string/empty_playlists" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/pb_size"
+        android:layout_height="@dimen/pb_size"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:layout_marginTop="@dimen/padding_98"
+        android:indeterminateTint="@color/progress_bar_color"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_playlist" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/padding_16"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/toolbar_height"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_playlist"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:spanCount="2"
+        tools:itemCount="6"
+        tools:listitem="@layout/playlist_item" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
