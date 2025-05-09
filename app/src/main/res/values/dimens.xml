@@ -26,6 +26,9 @@
     <dimen name="player_track_name_text">22sp</dimen>
     <dimen name="player_artist_name_text">14sp</dimen>
     <dimen name="player_details_text">13sp</dimen>
+    <dimen name="playlist_name_text">24sp</dimen>
+    <dimen name="playlist_text">18sp</dimen>
+    <dimen name="playlist_more_text">16sp</dimen>
     <dimen name="album_cover">45dp</dimen>
     <dimen name="fab">51dp</dimen>
     <dimen name="height_32">32dp</dimen>

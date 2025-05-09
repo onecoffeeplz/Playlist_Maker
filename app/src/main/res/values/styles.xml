@@ -218,4 +218,43 @@
         <item name="cornerSize">@dimen/et_corner_radius</item>
     </style>
 
+    <style name="PlaylistDetailsName">
+        <item name="android:textSize">@dimen/playlist_name_text</item>
+        <item name="android:textColor">@color/playlist_detail_text_color</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/ys_display_bold</item>
+        <item name="android:textFontWeight">700</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="PlaylistDetailsText">
+        <item name="android:textSize">@dimen/playlist_text</item>
+        <item name="android:textColor">@color/playlist_detail_text_color</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="PlaylistDetailsMoreText">
+        <item name="android:textSize">@dimen/playlist_more_text</item>
+        <item name="android:textColor">@color/media_text_color</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
 </resources>

@@ -51,4 +51,8 @@
     <string name="tracks_one"> трек</string>
     <string name="tracks_2_3_4"> трека</string>
     <string name="tracks_other"> треков</string>
+    <string name="playlist_share">Поделиться</string>
+    <string name="playlist_edit">Редактировать информацию</string>
+    <string name="playlist_delete">Удалить плейлист</string>
+    <string name="playlist_more">Меню</string>
 </resources>
