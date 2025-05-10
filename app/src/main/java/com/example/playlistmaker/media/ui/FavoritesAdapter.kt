@@ -9,15 +9,15 @@ import com.example.playlistmaker.search.domain.models.Track
 class FavoritesAdapter(
     var trackList: MutableList<Track>,
     private val onTrackClickListener: OnTrackClickListener? = null
-) : RecyclerView.Adapter<FavoritesViewHolder>() {
+) : RecyclerView.Adapter<TrackViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val binding =
             TrackItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FavoritesViewHolder(binding)
+        return TrackViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
             onTrackClickListener?.onTrackClick(trackList[position])
