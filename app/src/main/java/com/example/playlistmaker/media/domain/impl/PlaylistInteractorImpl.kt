@@ -28,4 +28,8 @@ class PlaylistInteractorImpl(
     override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean {
         return playlistRepository.addTrackToPlaylist(track, playlist)
     }
+
+    override suspend fun getPlaylistDetails(playlistId: Int): Pair<Playlist, List<Track>> {
+        return playlistRepository.getPlaylistDetails(playlistId)
+    }
 }

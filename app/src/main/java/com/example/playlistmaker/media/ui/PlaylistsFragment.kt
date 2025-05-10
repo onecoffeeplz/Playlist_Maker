@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
@@ -96,10 +95,11 @@ class PlaylistsFragment : Fragment(), PlaylistsAdapter.OnPlaylistClickListener {
     }
 
     override fun onPlaylistClick(playlist: Playlist) {
-        Toast.makeText(
-            requireContext(),
-            getString(R.string.todo),
-            Toast.LENGTH_SHORT
-        ).show()
+        val bundle = Bundle().apply {
+            putInt("playlistId", playlist.playlistId)
+        }
+//        val playlistDetailsFragment = PlaylistDetailsFragment.newInstance(playlist.playlistId)
+//        playlistDetailsFragment.arguments = bundle
+        findNavController().navigate(R.id.playlistDetailsFragment, bundle)
     }
 }

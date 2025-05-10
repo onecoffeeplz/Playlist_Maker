@@ -79,7 +79,7 @@ class PlaylistRepositoryImpl(
 
         appDatabase.playlistDao().addTrack(trackEntity)
 
-        val trackIdsList = playlistEntity.tracksIds?.split(",")?.map {it.trim()} ?: emptyList()
+        val trackIdsList = playlistEntity.tracksIds?.split(",")?.map { it.trim() } ?: emptyList()
         val trackInList = trackIdsList.contains(trackEntity.trackId.toString())
 
         if (trackInList) {
@@ -98,8 +98,23 @@ class PlaylistRepositoryImpl(
         }
     }
 
+    override suspend fun getPlaylistDetails(playlistId: Int): Pair<Playlist, List<Track>> {
+        val playlistEntity = appDatabase.playlistDao().getPlaylistDetails(playlistId)
+        val playlist = playlistDbConverter.map(playlistEntity)
+
+        val trackIdsString = playlistEntity.tracksIds ?: ""
+        val trackIds = trackIdsString.split(",").mapNotNull { it.trim().toIntOrNull() }
+
+        val tracks = trackIds.mapNotNull { trackId ->
+            val trackEntity = appDatabase.playlistDao().getTrackById(trackId)
+            trackDbConverter.map(trackEntity)
+        }
+
+        return Pair(playlist, tracks)
+    }
+
     private fun countTracks(tracksIds: String): Int {
-        val ids = tracksIds.split(",").map { it.trim() }. filter { it.isNotEmpty() }
+        val ids = tracksIds.split(",").map { it.trim() }.filter { it.isNotEmpty() }
         return ids.size
     }
 

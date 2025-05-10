@@ -10,4 +10,5 @@ interface PlaylistInteractor {
     suspend fun getPlaylists(): Flow<List<Playlist>>
     fun copyPlaylistCoverToLocalStorage(uri: String): String
     suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean
+    suspend fun getPlaylistDetails(playlistId: Int): Pair<Playlist, List<Track>>
 }
