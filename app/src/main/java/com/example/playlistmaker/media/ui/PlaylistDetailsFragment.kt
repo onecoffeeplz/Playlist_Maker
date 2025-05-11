@@ -101,6 +101,7 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
     }
 
     private fun showContent(playlistInfo: Playlist, playlistTracks: List<Track>) {
+        tracksAdapter.trackList = playlistTracks as MutableList<Track>
         with(binding) {
             playlistName.text = playlistInfo.playlistName
             if (playlistInfo.playlistDescription.isNullOrEmpty()) {
@@ -133,16 +134,16 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
             )
             playlistDuration.text = totalDurationText
 
-            tracks.clear()
-            tracks.addAll(playlistTracks)
-            tracksAdapter.notifyDataSetChanged()
-
             overlay.visibility = View.GONE
             playlistBottomSheet.visibility = View.VISIBLE
             playlistMoreBottomSheet.visibility = View.GONE
             playlist.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
         }
+
+        tracks.clear()
+        tracks.addAll(playlistTracks)
+        tracksAdapter.notifyDataSetChanged()
     }
 
     private fun showLoading() {
@@ -161,10 +162,6 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
         val config = context.resources.configuration
         config.setLocale(locale)
         return context.createConfigurationContext(config)
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onDestroyView() {
@@ -190,19 +187,19 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
     }
 
     override fun onTrackLongClick(track: Track): Boolean {
-        showExitConfirmationDialog()
+        showDeleteTrackDialog(track.trackId)
         return true
     }
 
-    private fun showExitConfirmationDialog() {
+    private fun showDeleteTrackDialog(trackId: Int) {
         MaterialAlertDialogBuilder(requireContext())
             .setMessage(R.string.playlist_details_dialog_body)
             .setNegativeButton(R.string.playlist_details_dialog_no) { dialog, _ ->
                 dialog.dismiss()
             }
             .setPositiveButton(R.string.playlist_details_dialog_yes) { dialog, _ ->
+                viewModel.removeTrackFromPlaylist(playlistId, trackId)
                 dialog.dismiss()
-                // TODO("delete track")
             }
             .show()
     }

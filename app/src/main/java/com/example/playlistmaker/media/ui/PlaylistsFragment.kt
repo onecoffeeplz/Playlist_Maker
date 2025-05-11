@@ -98,8 +98,6 @@ class PlaylistsFragment : Fragment(), PlaylistsAdapter.OnPlaylistClickListener {
         val bundle = Bundle().apply {
             putInt("playlistId", playlist.playlistId)
         }
-//        val playlistDetailsFragment = PlaylistDetailsFragment.newInstance(playlist.playlistId)
-//        playlistDetailsFragment.arguments = bundle
         findNavController().navigate(R.id.playlistDetailsFragment, bundle)
     }
 }

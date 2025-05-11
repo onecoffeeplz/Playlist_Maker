@@ -11,4 +11,5 @@ interface PlaylistRepository {
     fun copyPlaylistCoverToLocalStorage(uri: String): String
     suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean
     suspend fun getPlaylistDetails(playlistId: Int): Pair<Playlist, List<Track>>
+    suspend fun removeTrackFromPlaylist(playlistId: Int, trackId: Int)
 }

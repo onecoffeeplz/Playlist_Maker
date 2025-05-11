@@ -16,6 +16,7 @@ import com.example.playlistmaker.media.domain.db.PlaylistRepository
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
@@ -111,6 +112,32 @@ class PlaylistRepositoryImpl(
         }
 
         return Pair(playlist, tracks)
+    }
+
+    override suspend fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
+        val playlist = appDatabase.playlistDao().getPlaylistDetails(playlistId)
+        val tracksList =
+            playlist.tracksIds?.split(",")?.map { it.trim() }?.toMutableList() ?: mutableListOf()
+        val removed = tracksList.remove(trackId.toString())
+        val newTracksIds = if (tracksList.isEmpty()) null else tracksList.joinToString(",")
+        val updatedPlaylist = playlist.copy(
+            tracksIds = newTracksIds,
+            tracksCount = (playlist.tracksCount - if (removed) 1 else 0).coerceAtLeast(0)
+        )
+        appDatabase.playlistDao().updatePlaylist(updatedPlaylist)
+
+        val trackIsInOtherPlaylists = isTrackInAnyPlaylist(trackId)
+        if (!trackIsInOtherPlaylists) {
+            appDatabase.playlistDao().deleteTrackById(trackId)
+        }
+    }
+
+    private suspend fun isTrackInAnyPlaylist(trackId: Int): Boolean {
+        val allPlaylists = appDatabase.playlistDao().getPlaylists().first()
+
+        return allPlaylists.any { playlist ->
+            playlist.tracksIds?.split(",")?.map { it.trim() }?.contains(trackId.toString()) == true
+        }
     }
 
     private fun countTracks(tracksIds: String): Int {

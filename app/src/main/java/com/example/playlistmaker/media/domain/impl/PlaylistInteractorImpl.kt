@@ -32,4 +32,8 @@ class PlaylistInteractorImpl(
     override suspend fun getPlaylistDetails(playlistId: Int): Pair<Playlist, List<Track>> {
         return playlistRepository.getPlaylistDetails(playlistId)
     }
+
+    override suspend fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
+        return playlistRepository.removeTrackFromPlaylist(playlistId, trackId)
+    }
 }
