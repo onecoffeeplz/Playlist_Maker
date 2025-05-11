@@ -13,31 +13,41 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistDetailsBinding
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.media.presentation.PlaylistDetailsState
 import com.example.playlistmaker.media.presentation.PlaylistDetailsViewModel
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
 import java.util.Locale
 
-class PlaylistDetailsFragment : Fragment() {
+class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackClickListener,
+    PlaylistDetailsTrackAdapter.OnTrackLongClickListener {
 
     private var _binding: FragmentPlaylistDetailsBinding? = null
     private val binding
         get() = _binding
             ?: throw IllegalStateException("Binding for FragmentPlaylistsDetailsBinding must not be null!")
 
-    private val playlistId by lazy { arguments?.getInt("playlistId") ?: throw IllegalArgumentException("playlistId must be passed as an argument!") }
-    private lateinit var tracks: List<Track>
+    private val playlistId by lazy {
+        arguments?.getInt("playlistId")
+            ?: throw IllegalArgumentException("playlistId must be passed as an argument!")
+    }
 
     private lateinit var viewModel: PlaylistDetailsViewModel
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+
+    private var tracks: MutableList<Track> = mutableListOf()
+    private val tracksAdapter = PlaylistDetailsTrackAdapter(tracks, this, this)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +65,9 @@ class PlaylistDetailsFragment : Fragment() {
         binding.mediaToolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
+
+        binding.rvPlaylistTracks.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvPlaylistTracks.adapter = tracksAdapter
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             viewModel.getPlaylistDetails(playlistId)
@@ -77,7 +90,9 @@ class PlaylistDetailsFragment : Fragment() {
                 val shareIconLocation = IntArray(2)
                 shareIcon.getLocationOnScreen(shareIconLocation)
                 val shareIconBottom = shareIconLocation[1] + shareIconHeight
-                val desiredHeight = screenHeight - (shareIconBottom + resources.getDimension(R.dimen.padding_8).toInt())
+                val desiredHeight =
+                    screenHeight - (shareIconBottom + resources.getDimension(R.dimen.padding_8)
+                        .toInt())
                 bottomSheetBehavior.peekHeight = desiredHeight
                 shareIcon.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
@@ -85,7 +100,7 @@ class PlaylistDetailsFragment : Fragment() {
         shareIcon.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
     }
 
-    private fun showContent(playlistInfo: Playlist, tracks: List<Track>) {
+    private fun showContent(playlistInfo: Playlist, playlistTracks: List<Track>) {
         with(binding) {
             playlistName.text = playlistInfo.playlistName
             if (playlistInfo.playlistDescription.isNullOrEmpty()) {
@@ -101,14 +116,26 @@ class PlaylistDetailsFragment : Fragment() {
 
             val localizedContext = setLocale(requireContext(), "ru")
 
-            val trackCount = tracks.size
-            val trackText = localizedContext.resources.getQuantityString(R.plurals.tracks_count, trackCount, trackCount)
+            val trackCount = playlistTracks.size
+            val trackText = localizedContext.resources.getQuantityString(
+                R.plurals.tracks_count,
+                trackCount,
+                trackCount
+            )
             playlistTracksCount.text = trackText
 
-            val totalDurationMillis = tracks.sumOf { it.trackTimeMillis }
+            val totalDurationMillis = playlistTracks.sumOf { it.trackTimeMillis }
             val totalDurationMinutes = (totalDurationMillis / (60 * 1000)).toInt()
-            val totalDurationText = localizedContext.resources.getQuantityString(R.plurals.minutes_count, totalDurationMinutes, totalDurationMinutes)
+            val totalDurationText = localizedContext.resources.getQuantityString(
+                R.plurals.minutes_count,
+                totalDurationMinutes,
+                totalDurationMinutes
+            )
             playlistDuration.text = totalDurationText
+
+            tracks.clear()
+            tracks.addAll(playlistTracks)
+            tracksAdapter.notifyDataSetChanged()
 
             overlay.visibility = View.GONE
             playlistBottomSheet.visibility = View.VISIBLE
@@ -151,6 +178,33 @@ class PlaylistDetailsFragment : Fragment() {
                 putInt("playlistId", playlistId)
             }
         }
+    }
+
+    override fun onTrackClick(track: Track) {
+        val bundle = Bundle().apply {
+            putString("track", Gson().toJson(track))
+        }
+        val playerFragment = PlayerFragment()
+        playerFragment.arguments = bundle
+        findNavController().navigate(R.id.action_playlistDetailsFragment_to_playerFragment, bundle)
+    }
+
+    override fun onTrackLongClick(track: Track): Boolean {
+        showExitConfirmationDialog()
+        return true
+    }
+
+    private fun showExitConfirmationDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.playlist_details_dialog_body)
+            .setNegativeButton(R.string.playlist_details_dialog_no) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(R.string.playlist_details_dialog_yes) { dialog, _ ->
+                dialog.dismiss()
+                // TODO("delete track")
+            }
+            .show()
     }
 
 }

@@ -55,4 +55,7 @@
     <string name="playlist_edit">Редактировать информацию</string>
     <string name="playlist_delete">Удалить плейлист</string>
     <string name="playlist_more">Меню</string>
+    <string name="playlist_details_dialog_body">Хотите удалить трек?</string>
+    <string name="playlist_details_dialog_yes">ДА</string>
+    <string name="playlist_details_dialog_no">НЕТ</string>
 </resources>
