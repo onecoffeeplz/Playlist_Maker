@@ -1,6 +1,7 @@
 package com.example.playlistmaker.media.data.impl
 
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -20,6 +21,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlaylistRepositoryImpl(
     private val context: Context,
@@ -130,6 +133,28 @@ class PlaylistRepositoryImpl(
         if (!trackIsInOtherPlaylists) {
             appDatabase.playlistDao().deleteTrackById(trackId)
         }
+    }
+
+    override fun sharePlaylist(playlist: Playlist, tracks: List<Track>) {
+        val message = prepareMessage(playlist, tracks)
+        val share = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, message)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(share)
+    }
+
+    private fun prepareMessage(playlist: Playlist, tracks: List<Track>): String {
+        val description = if (!playlist.playlistDescription.isNullOrEmpty()) "\nОписание: ${playlist.playlistDescription}" else ""
+        val trackList = tracks.joinToString("\n") { track ->
+            "${tracks.indexOf(track) + 1}. ${track.artistName} - ${track.trackName} (${formatDuration(track.trackTimeMillis)})"
+        }
+        return "**${playlist.playlistName}**$description\nКоличество треков: ${playlist.tracksCount}\n\nСписок треков:\n$trackList"
+    }
+
+    private fun formatDuration(trackTimeMillis: Long): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
     }
 
     private suspend fun isTrackInAnyPlaylist(trackId: Int): Boolean {

@@ -46,6 +46,7 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
     private lateinit var viewModel: PlaylistDetailsViewModel
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
+    private lateinit var playlist: Playlist
     private var tracks: MutableList<Track> = mutableListOf()
     private val tracksAdapter = PlaylistDetailsTrackAdapter(tracks, this, this)
 
@@ -98,10 +99,19 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
             }
         }
         shareIcon.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
+
+        binding.playlistShare.setOnClickListener {
+            if (tracks.size > 0) {
+                viewModel.sharePlaylist(playlist, tracks)
+            } else {
+                showEmptyPlaylistMessage()
+            }
+        }
     }
 
     private fun showContent(playlistInfo: Playlist, playlistTracks: List<Track>) {
         tracksAdapter.trackList = playlistTracks as MutableList<Track>
+        playlist = playlistInfo
         with(binding) {
             playlistName.text = playlistInfo.playlistName
             if (playlistInfo.playlistDescription.isNullOrEmpty()) {
@@ -199,6 +209,15 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
             }
             .setPositiveButton(R.string.playlist_details_dialog_yes) { dialog, _ ->
                 viewModel.removeTrackFromPlaylist(playlistId, trackId)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showEmptyPlaylistMessage() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(R.string.playlist_details_empty_playlist)
+            .setPositiveButton(R.string.playlist_dialog_cancel) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()

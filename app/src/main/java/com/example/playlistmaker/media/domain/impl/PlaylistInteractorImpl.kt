@@ -36,4 +36,8 @@ class PlaylistInteractorImpl(
     override suspend fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
         return playlistRepository.removeTrackFromPlaylist(playlistId, trackId)
     }
+
+    override fun sharePlaylist(playlist: Playlist, tracks: List<Track>) {
+        return playlistRepository.sharePlaylist(playlist, tracks)
+    }
 }
