@@ -8,7 +8,7 @@
     tools:context=".media.ui.PlaylistDetailsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/playlist"
+        android:id="@+id/playlist_details"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/playlist_detail_background">
@@ -190,12 +190,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/playlist_more_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/bottom_sheet"
         android:orientation="horizontal"
-        android:visibility="gone"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="266dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -212,7 +210,6 @@
             layout="@layout/playlist_item_oneline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/padding_16"
             android:layout_marginTop="@dimen/padding_24"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -100,12 +100,51 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
         }
         shareIcon.viewTreeObserver.addOnGlobalLayoutListener(layoutListener)
 
-        binding.playlistShare.setOnClickListener {
-            if (tracks.size > 0) {
-                viewModel.sharePlaylist(playlist, tracks)
-            } else {
-                showEmptyPlaylistMessage()
+        val moreBottomSheetBehavior =
+            BottomSheetBehavior.from(binding.playlistMoreBottomSheet).apply {
+                state = BottomSheetBehavior.STATE_HIDDEN
             }
+        moreBottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.visibility = View.GONE
+                    }
+
+                    else -> {
+                        with(binding) {
+                            overlay.visibility = View.VISIBLE
+                            playlist.playlistCoverUri?.let { uri ->
+                                playlistInfo.playlistCover.setImageURI(uri.toUri())
+                            } ?: run {
+                                playlistInfo.playlistCover.setImageResource(R.drawable.ic_placeholder)
+                            }
+                            playlistInfo.playlistName.text = playlist.playlistName
+                            playlistInfo.playlistTracksCount.text =
+                                getLocalizedTrackCountText(playlist.tracksCount)
+                        }
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
+
+        binding.playlistMore.setOnClickListener {
+            moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+
+        binding.playlistShare.setOnClickListener { sharePlaylist() }
+        binding.playlistMoreShare.setOnClickListener { sharePlaylist() }
+
+    }
+
+    private fun sharePlaylist() {
+        if (tracks.size > 0) {
+            viewModel.sharePlaylist(playlist, tracks)
+        } else {
+            showEmptyPlaylistMessage()
         }
     }
 
@@ -127,13 +166,7 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
 
             val localizedContext = setLocale(requireContext(), "ru")
 
-            val trackCount = playlistTracks.size
-            val trackText = localizedContext.resources.getQuantityString(
-                R.plurals.tracks_count,
-                trackCount,
-                trackCount
-            )
-            playlistTracksCount.text = trackText
+            playlistTracksCount.text = getLocalizedTrackCountText(playlistTracks.size)
 
             val totalDurationMillis = playlistTracks.sumOf { it.trackTimeMillis }
             val totalDurationMinutes = (totalDurationMillis / (60 * 1000)).toInt()
@@ -146,8 +179,8 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
 
             overlay.visibility = View.GONE
             playlistBottomSheet.visibility = View.VISIBLE
-            playlistMoreBottomSheet.visibility = View.GONE
-            playlist.visibility = View.VISIBLE
+            playlistMoreBottomSheet.visibility = View.VISIBLE
+            playlistDetails.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
         }
 
@@ -156,12 +189,22 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
         tracksAdapter.notifyDataSetChanged()
     }
 
+    private fun getLocalizedTrackCountText(trackCount: Int): String {
+        val localizedContext = setLocale(requireContext(), "ru")
+        val trackText = localizedContext.resources.getQuantityString(
+            R.plurals.tracks_count,
+            trackCount,
+            trackCount
+        )
+        return trackText
+    }
+
     private fun showLoading() {
         with(binding) {
             overlay.visibility = View.GONE
             playlistBottomSheet.visibility = View.GONE
             playlistMoreBottomSheet.visibility = View.GONE
-            playlist.visibility = View.GONE
+            playlistDetails.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
         }
     }
