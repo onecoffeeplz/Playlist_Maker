@@ -1,6 +1,5 @@
 package com.example.playlistmaker.media.ui
 
-import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,7 +27,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
-import java.util.Locale
 
 class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackClickListener,
     PlaylistDetailsTrackAdapter.OnTrackLongClickListener {
@@ -166,18 +164,10 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
                 playlistCover.setImageURI(playlistInfo.playlistCoverUri.toUri())
             }
 
-            val localizedContext = setLocale(requireContext(), "ru")
-
             playlistTracksCount.text = getLocalizedTrackCountText(playlistTracks.size)
 
             val totalDurationMillis = playlistTracks.sumOf { it.trackTimeMillis }
-            val totalDurationMinutes = (totalDurationMillis / (60 * 1000)).toInt()
-            val totalDurationText = localizedContext.resources.getQuantityString(
-                R.plurals.minutes_count,
-                totalDurationMinutes,
-                totalDurationMinutes
-            )
-            playlistDuration.text = totalDurationText
+            playlistDuration.text = getLocalizedDurationInMinutesText(totalDurationMillis)
 
             overlay.visibility = View.GONE
             playlistBottomSheet.visibility = View.VISIBLE
@@ -192,13 +182,22 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
     }
 
     private fun getLocalizedTrackCountText(trackCount: Int): String {
-        val localizedContext = setLocale(requireContext(), "ru")
-        val trackText = localizedContext.resources.getQuantityString(
+        val trackText = resources.getQuantityString(
             R.plurals.tracks_count,
             trackCount,
             trackCount
         )
         return trackText
+    }
+
+    private fun getLocalizedDurationInMinutesText(totalDurationMillis: Long): String {
+        val totalDurationMinutes = (totalDurationMillis / (60 * 1000)).toInt()
+        val totalDurationText = resources.getQuantityString(
+            R.plurals.minutes_count,
+            totalDurationMinutes,
+            totalDurationMinutes
+        )
+        return totalDurationText
     }
 
     private fun showLoading() {
@@ -209,14 +208,6 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
             playlistDetails.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
         }
-    }
-
-    private fun setLocale(context: Context, language: String = "ru"): Context {
-        val locale = Locale(language)
-        Locale.setDefault(locale)
-        val config = context.resources.configuration
-        config.setLocale(locale)
-        return context.createConfigurationContext(config)
     }
 
     override fun onDestroyView() {
