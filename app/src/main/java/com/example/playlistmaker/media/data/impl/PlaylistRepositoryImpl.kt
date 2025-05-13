@@ -148,12 +148,30 @@ class PlaylistRepositoryImpl(
     override suspend fun deletePlaylist(playlist: Playlist) {
         val playlistEntity = playlistDbConverter.map(playlist)
         appDatabase.playlistDao().deletePlaylist(playlistEntity)
+
+        val tracksList = playlist.tracksIds?.split(",")?.mapNotNull { it.trim().toIntOrNull() } ?: emptyList()
+
+        val allPlaylists = appDatabase.playlistDao().getPlaylists().first()
+        val trackIdsInPlaylists = allPlaylists
+            .flatMap { it -> it.tracksIds?.split(",")?.mapNotNull { it.trim().toIntOrNull() } ?: emptyList() }
+            .toSet()
+
+        for (trackId in tracksList) {
+            if (!trackIdsInPlaylists.contains(trackId)) {
+                appDatabase.playlistDao().deleteTrackById(trackId)
+            }
+        }
     }
 
     private fun prepareMessage(playlist: Playlist, tracks: List<Track>): String {
-        val description = if (!playlist.playlistDescription.isNullOrEmpty()) "\nОписание: ${playlist.playlistDescription}" else ""
+        val description =
+            if (!playlist.playlistDescription.isNullOrEmpty()) "\nОписание: ${playlist.playlistDescription}" else ""
         val trackList = tracks.joinToString("\n") { track ->
-            "${tracks.indexOf(track) + 1}. ${track.artistName} - ${track.trackName} (${formatDuration(track.trackTimeMillis)})"
+            "${tracks.indexOf(track) + 1}. ${track.artistName} - ${track.trackName} (${
+                formatDuration(
+                    track.trackTimeMillis
+                )
+            })"
         }
         return "**${playlist.playlistName}**$description\nКоличество треков: ${playlist.tracksCount}\n\nСписок треков:\n$trackList"
     }
