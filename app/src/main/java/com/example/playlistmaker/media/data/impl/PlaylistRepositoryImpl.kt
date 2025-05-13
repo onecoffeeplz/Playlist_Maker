@@ -145,6 +145,11 @@ class PlaylistRepositoryImpl(
         context.startActivity(share)
     }
 
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        val playlistEntity = playlistDbConverter.map(playlist)
+        appDatabase.playlistDao().deletePlaylist(playlistEntity)
+    }
+
     private fun prepareMessage(playlist: Playlist, tracks: List<Track>): String {
         val description = if (!playlist.playlistDescription.isNullOrEmpty()) "\nОписание: ${playlist.playlistDescription}" else ""
         val trackList = tracks.joinToString("\n") { track ->

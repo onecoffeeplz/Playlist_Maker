@@ -13,4 +13,5 @@ interface PlaylistRepository {
     suspend fun getPlaylistDetails(playlistId: Int): Pair<Playlist, List<Track>>
     suspend fun removeTrackFromPlaylist(playlistId: Int, trackId: Int)
     fun sharePlaylist(playlist: Playlist, tracks: List<Track>)
+    suspend fun deletePlaylist(playlist: Playlist)
 }

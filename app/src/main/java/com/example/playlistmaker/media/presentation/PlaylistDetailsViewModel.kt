@@ -43,4 +43,10 @@ class PlaylistDetailsViewModel(
         playlistInteractor.sharePlaylist(playlist, tracks)
     }
 
+    fun deletePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.deletePlaylist(playlist)
+        }
+    }
+
 }

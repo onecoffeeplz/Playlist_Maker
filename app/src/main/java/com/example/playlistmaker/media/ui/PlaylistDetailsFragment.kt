@@ -138,6 +138,8 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
         binding.playlistShare.setOnClickListener { sharePlaylist() }
         binding.playlistMoreShare.setOnClickListener { sharePlaylist() }
 
+        binding.playlistMoreDelete.setOnClickListener { showDeletePlaylistDialog(playlist) }
+
     }
 
     private fun sharePlaylist() {
@@ -262,6 +264,20 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
             .setMessage(R.string.playlist_details_empty_playlist)
             .setPositiveButton(R.string.playlist_dialog_cancel) { dialog, _ ->
                 dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showDeletePlaylistDialog(playlist: Playlist) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(getString(R.string.playlist_details_delete_playlist, playlist.playlistName))
+            .setNegativeButton(R.string.playlist_details_dialog_no) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(R.string.playlist_details_dialog_yes) { dialog, _ ->
+                viewModel.deletePlaylist(playlist)
+                dialog.dismiss()
+                findNavController().popBackStack()
             }
             .show()
     }
