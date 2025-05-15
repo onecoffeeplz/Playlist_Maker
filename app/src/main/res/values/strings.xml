@@ -58,5 +58,6 @@
     <string name="playlist_details_dialog_yes">YES</string>
     <string name="playlist_details_dialog_no">NO</string>
     <string name="playlist_details_empty_playlist">This playlist has no tracks for sharing</string>
+    <string name="playlist_details_empty_tracks">This playlist has no tracks</string>
     <string name="playlist_details_delete_playlist">Do you want to delete playlist %1$s?</string>
 </resources>

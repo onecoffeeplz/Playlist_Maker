@@ -166,7 +166,7 @@
         android:background="@drawable/bottom_sheet"
         android:orientation="horizontal"
         app:behavior_hideable="false"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" >
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
             android:layout_width="50dp"
@@ -184,6 +184,19 @@
             android:paddingTop="@dimen/padding_16"
             tools:itemCount="5"
             tools:listitem="@layout/track_item" />
+
+        <TextView
+            android:id="@+id/no_tracks"
+            style="@style/PlaylistDetailsMoreText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/height_32"
+            android:text="@string/playlist_details_empty_tracks"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -134,7 +134,10 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
         }
 
         binding.playlistShare.setOnClickListener { sharePlaylist() }
-        binding.playlistMoreShare.setOnClickListener { sharePlaylist() }
+        binding.playlistMoreShare.setOnClickListener {
+            sharePlaylist()
+            moreBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         binding.playlistMoreDelete.setOnClickListener { showDeletePlaylistDialog(playlist) }
 
@@ -142,7 +145,11 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
             val bundle = Bundle().apply {
                 putInt("playlistId", playlist.playlistId)
             }
-            findNavController().navigate(R.id.action_playlistDetailsFragment_to_editPlaylistFragment, bundle) }
+            findNavController().navigate(
+                R.id.action_playlistDetailsFragment_to_editPlaylistFragment,
+                bundle
+            )
+        }
 
     }
 
@@ -185,6 +192,14 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
         tracks.clear()
         tracks.addAll(playlistTracks)
         tracksAdapter.notifyDataSetChanged()
+
+        if (playlistTracks.isNotEmpty()) {
+            binding.noTracks.visibility = View.GONE
+            binding.rvPlaylistTracks.visibility = View.VISIBLE
+        } else {
+            binding.noTracks.visibility = View.VISIBLE
+            binding.rvPlaylistTracks.visibility = View.GONE
+        }
     }
 
     private fun getLocalizedTrackCountText(trackCount: Int): String {
