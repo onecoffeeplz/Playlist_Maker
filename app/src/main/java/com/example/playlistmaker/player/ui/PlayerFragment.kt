@@ -181,7 +181,10 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.onRelease()
+        val currentDestination = findNavController().currentDestination
+        if (currentDestination?.id != R.id.newPlaylistFragment) {
+            viewModel.onRelease()
+        }
         _binding = null
     }
 
