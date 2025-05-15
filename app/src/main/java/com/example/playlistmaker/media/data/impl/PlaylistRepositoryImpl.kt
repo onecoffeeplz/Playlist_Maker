@@ -109,10 +109,11 @@ class PlaylistRepositoryImpl(
         val trackIdsString = playlistEntity.tracksIds ?: ""
         val trackIds = trackIdsString.split(",").mapNotNull { it.trim().toIntOrNull() }
 
-        val tracks = trackIds.mapNotNull { trackId ->
+        var tracks = trackIds.mapNotNull { trackId ->
             val trackEntity = appDatabase.playlistDao().getTrackById(trackId)
             trackDbConverter.map(trackEntity)
-        }.reversed()
+        }
+        if (tracks.isNotEmpty()) tracks = tracks.reversed()
 
         return Pair(playlist, tracks)
     }
