@@ -52,7 +52,10 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
+            isFitToContents = false
+            halfExpandedRatio = 0.66f
         }
+
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -71,7 +74,7 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
         })
 
         binding.addBtn.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
 
         viewModel.observeState().observe(viewLifecycleOwner) { state ->
