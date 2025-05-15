@@ -28,11 +28,12 @@ class RootActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when(destination.id) {
-                R.id.newPlaylistFragment, R.id.playerFragment, R.id.playlistDetailsFragment -> {
+            when (destination.id) {
+                R.id.newPlaylistFragment, R.id.playerFragment, R.id.playlistDetailsFragment, R.id.editPlaylistFragment -> {
                     binding.bottomNavigationView.visibility = View.GONE
                     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
                 }
+
                 else -> binding.bottomNavigationView.visibility = View.VISIBLE
             }
         }

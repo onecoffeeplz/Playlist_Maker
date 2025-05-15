@@ -138,6 +138,12 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
 
         binding.playlistMoreDelete.setOnClickListener { showDeletePlaylistDialog(playlist) }
 
+        binding.playlistMoreEdit.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("playlistId", playlist.playlistId)
+            }
+            findNavController().navigate(R.id.action_playlistDetailsFragment_to_editPlaylistFragment, bundle) }
+
     }
 
     private fun sharePlaylist() {

@@ -33,12 +33,14 @@
     <string name="empty_favorites">Your media is empty</string>
     <string name="empty_playlists">You did not create\nany playlists</string>
     <string name="new_playlist">New playlist</string>
+    <string name="edit_playlist">Edit playlist</string>
     <string name="favorites">Favorites</string>
     <string name="playlists">Playlists</string>
     <string name="playlist_cover_image">Playlist cover image</string>
     <string name="playlist_name">Name*</string>
     <string name="playlist_description">Description</string>
     <string name="create">Create</string>
+    <string name="save">Save</string>
     <string name="playlist_dialog_title">Finish playlist creation?</string>
     <string name="playlist_dialog_body">All unsaved data will be lost</string>
     <string name="playlist_dialog_finish">Finish</string>

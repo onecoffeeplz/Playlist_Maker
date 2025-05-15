@@ -19,14 +19,15 @@ import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
     private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding
+    protected val binding
         get() = _binding
             ?: throw IllegalStateException("Binding for FragmentNewPlaylistBinding must not be null!")
 
-    private var uri: Uri? = null
+    protected var uri: Uri? = null
+    protected lateinit var backPressedCallback: OnBackPressedCallback
 
     private val viewModel by viewModel<NewPlaylistViewModel>()
 
@@ -50,8 +51,10 @@ class NewPlaylistFragment : Fragment() {
                 showToast(binding.playlistName.text.toString())
                 findNavController().popBackStack()
             }.onFailure { exception ->
-                Toast.makeText(requireContext(),
-                    getString(R.string.error_toast, exception.message), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.error_toast, exception.message), Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -76,15 +79,17 @@ class NewPlaylistFragment : Fragment() {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
+        backPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleBackPressed()
+            }
+        }
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    handleBackPressed()
-                }
-            })
+            backPressedCallback
+        )
 
-        binding.playlistCreate.setOnClickListener{
+        binding.playlistCreate.setOnClickListener {
             viewModel.createPlaylist(
                 binding.playlistName.text.toString(),
                 binding.playlistDescription.text.toString(),
@@ -107,7 +112,7 @@ class NewPlaylistFragment : Fragment() {
             .show()
     }
 
-    private fun handleBackPressed() {
+    open fun handleBackPressed() {
         if (binding.playlistName.text.toString()
                 .isNotEmpty() || binding.playlistDescription.text.toString()
                 .isNotEmpty() || uri != null
@@ -128,6 +133,7 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        backPressedCallback.remove()
         _binding = null
     }
 
