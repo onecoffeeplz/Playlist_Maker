@@ -7,13 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.playlistmaker.databinding.FragmentSettingsBinding
 import com.example.playlistmaker.settings.presentation.SettingsViewModel
+import dev.androidbroadcast.vbpd.viewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
-    private var _binding: FragmentSettingsBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentSettingsBinding must not be null!")
+
+    private val binding by viewBinding(FragmentSettingsBinding::bind)
 
     private val viewModel by viewModel<SettingsViewModel>()
 
@@ -22,8 +21,7 @@ class SettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentSettingsBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,10 +46,5 @@ class SettingsFragment : Fragment() {
         binding.settingsTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onSwitchTheme(isChecked)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

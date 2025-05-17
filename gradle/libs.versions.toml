@@ -21,6 +21,7 @@ navigationFragmentKtx = "2.8.9"
 navigationUiKtx = "2.8.9"
 coroutinesAndroid = "1.10.1"
 room = "2.7.0"
+vbpd = "2.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+vbpd = { module = "dev.androidbroadcast.vbpd:vbpd", version.ref = "vbpd"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

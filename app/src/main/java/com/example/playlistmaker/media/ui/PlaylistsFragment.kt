@@ -12,14 +12,12 @@ import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.media.presentation.PlaylistsState
 import com.example.playlistmaker.media.presentation.PlaylistsViewModel
+import dev.androidbroadcast.vbpd.viewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment(), PlaylistsAdapter.OnPlaylistClickListener {
 
-    private var _binding: FragmentPlaylistsBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentPlaylistsBinding must not be null!")
+    private val binding by viewBinding(FragmentPlaylistsBinding::bind)
 
     private val viewModel: PlaylistsViewModel by viewModel()
     private val playlists: MutableList<Playlist> = mutableListOf()
@@ -29,8 +27,7 @@ class PlaylistsFragment : Fragment(), PlaylistsAdapter.OnPlaylistClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentPlaylistsBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,11 +80,6 @@ class PlaylistsFragment : Fragment(), PlaylistsAdapter.OnPlaylistClickListener {
     override fun onResume() {
         super.onResume()
         viewModel.getAllPlaylists()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {

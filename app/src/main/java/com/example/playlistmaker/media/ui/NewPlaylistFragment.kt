@@ -17,14 +17,12 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dev.androidbroadcast.vbpd.viewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 open class NewPlaylistFragment : Fragment() {
 
-    private var _binding: FragmentNewPlaylistBinding? = null
-    protected val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentNewPlaylistBinding must not be null!")
+    protected val binding by viewBinding(FragmentNewPlaylistBinding::bind)
 
     protected var uri: Uri? = null
     protected lateinit var backPressedCallback: OnBackPressedCallback
@@ -35,8 +33,7 @@ open class NewPlaylistFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentNewPlaylistBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -134,7 +131,6 @@ open class NewPlaylistFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         backPressedCallback.remove()
-        _binding = null
     }
 
     companion object {

@@ -21,15 +21,14 @@ import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
+import dev.androidbroadcast.vbpd.viewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
-    private var _binding: FragmentPlayerBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentPlayerBinding must not be null!")
+
+    private val binding by viewBinding(FragmentPlayerBinding::bind)
 
     private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var playButton: ImageButton
@@ -41,8 +40,7 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentPlayerBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -185,7 +183,6 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
         if (currentDestination?.id != R.id.newPlaylistFragment) {
             viewModel.onRelease()
         }
-        _binding = null
     }
 
     override fun onPlaylistClick(playlist: Playlist) {

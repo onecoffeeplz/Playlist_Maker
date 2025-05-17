@@ -21,13 +21,12 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchState
 import com.example.playlistmaker.search.presentation.SearchViewModel
 import com.google.gson.Gson
+import dev.androidbroadcast.vbpd.viewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment(), TrackAdapter.OnTrackClickListener {
-    private var _binding: FragmentSearchBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentSearchBinding must not be null!")
+
+    private val binding by viewBinding(FragmentSearchBinding::bind)
 
     private val viewModel by viewModel<SearchViewModel>()
     private val trackList: MutableList<Track> = mutableListOf()
@@ -39,8 +38,7 @@ class SearchFragment : Fragment(), TrackAdapter.OnTrackClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentSearchBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -204,8 +202,4 @@ class SearchFragment : Fragment(), TrackAdapter.OnTrackClickListener {
         findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

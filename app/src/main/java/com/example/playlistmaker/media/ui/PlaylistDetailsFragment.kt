@@ -27,14 +27,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.core.parameter.parametersOf
+import dev.androidbroadcast.vbpd.viewBinding
 
 class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackClickListener,
     PlaylistDetailsTrackAdapter.OnTrackLongClickListener {
 
-    private var _binding: FragmentPlaylistDetailsBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentPlaylistsDetailsBinding must not be null!")
+    private val binding by viewBinding(FragmentPlaylistDetailsBinding::bind)
 
     private val playlistId by lazy {
         arguments?.getInt("playlistId")
@@ -52,8 +50,7 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaylistDetailsBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentPlaylistDetailsBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -229,11 +226,6 @@ class PlaylistDetailsFragment : Fragment(), PlaylistDetailsTrackAdapter.OnTrackC
             playlistDetails.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {
