@@ -20,15 +20,10 @@ class BottomSheetViewHolder(private val binding: PlaylistItemOnelineBinding) :
                 playlistCover.setImageResource(R.drawable.ic_placeholder)
             }
             playlistName.text = item.playlistName
-            playlistTracksCount.text = getCorrectTracksName(item.tracksCount)
-        }
-    }
-
-    private fun getCorrectTracksName(count: Int): String {
-        return when {
-            count % 10 == 1 && count % 100 != 11 -> "$count ${context.getString(R.string.tracks_one)}"
-            count % 10 in 2..4 && (count % 100 < 12 || count % 100 > 14) -> "$count ${context.getString(R.string.tracks_2_3_4)}"
-            else -> "$count ${context.getString(R.string.tracks_other)}"
+            playlistTracksCount.text = context.resources.getQuantityString(
+                R.plurals.tracks_count,
+                item.tracksCount,
+                item.tracksCount)
         }
     }
 }

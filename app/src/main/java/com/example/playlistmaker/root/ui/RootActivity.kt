@@ -8,18 +8,15 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityRootBinding
+import dev.androidbroadcast.vbpd.viewBinding
 
 class RootActivity : AppCompatActivity() {
 
-    private var _binding: ActivityRootBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for ActivityRootBinding must not be null!")
+    private val binding by viewBinding(ActivityRootBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityRootBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(ActivityRootBinding.inflate(layoutInflater).root)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
@@ -28,11 +25,12 @@ class RootActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when(destination.id) {
-                R.id.newPlaylistFragment, R.id.playerFragment -> {
+            when (destination.id) {
+                R.id.newPlaylistFragment, R.id.playerFragment, R.id.playlistDetailsFragment, R.id.editPlaylistFragment -> {
                     binding.bottomNavigationView.visibility = View.GONE
                     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
                 }
+
                 else -> binding.bottomNavigationView.visibility = View.VISIBLE
             }
         }

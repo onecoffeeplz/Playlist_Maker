@@ -8,12 +8,11 @@ import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediaBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import dev.androidbroadcast.vbpd.viewBinding
 
 class MediaFragment : Fragment() {
-    private var _binding: FragmentMediaBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentMediaBinding must not be null!")
+
+    private val binding by viewBinding(FragmentMediaBinding::bind)
 
     private lateinit var tabMediator: TabLayoutMediator
 
@@ -22,8 +21,7 @@ class MediaFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMediaBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentMediaBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,6 +42,5 @@ class MediaFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         tabMediator.detach()
-        _binding = null
     }
 }

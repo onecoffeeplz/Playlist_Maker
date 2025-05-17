@@ -28,4 +28,20 @@ class PlaylistInteractorImpl(
     override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist): Boolean {
         return playlistRepository.addTrackToPlaylist(track, playlist)
     }
+
+    override suspend fun getPlaylistDetails(playlistId: Int): Pair<Playlist, List<Track>> {
+        return playlistRepository.getPlaylistDetails(playlistId)
+    }
+
+    override suspend fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
+        return playlistRepository.removeTrackFromPlaylist(playlistId, trackId)
+    }
+
+    override fun sharePlaylist(playlist: Playlist, tracks: List<Track>) {
+        return playlistRepository.sharePlaylist(playlist, tracks)
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        return playlistRepository.deletePlaylist(playlist)
+    }
 }

@@ -11,7 +11,7 @@ import com.example.playlistmaker.search.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class FavoritesViewHolder(private val binding: TrackItemBinding) :
+class TrackViewHolder(private val binding: TrackItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Track) {

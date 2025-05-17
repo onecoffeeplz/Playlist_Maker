@@ -21,15 +21,14 @@ import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
+import dev.androidbroadcast.vbpd.viewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
-    private var _binding: FragmentPlayerBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentPlayerBinding must not be null!")
+
+    private val binding by viewBinding(FragmentPlayerBinding::bind)
 
     private val viewModel by viewModel<PlayerViewModel>()
     private lateinit var playButton: ImageButton
@@ -41,8 +40,7 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentPlayerBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,7 +50,10 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistsBottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
+            isFitToContents = false
+            halfExpandedRatio = 0.66f
         }
+
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -71,7 +72,7 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
         })
 
         binding.addBtn.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         }
 
         viewModel.observeState().observe(viewLifecycleOwner) { state ->
@@ -178,8 +179,10 @@ class PlayerFragment : Fragment(), BottomSheetAdapter.OnPlaylistClickListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.onRelease()
-        _binding = null
+        val currentDestination = findNavController().currentDestination
+        if (currentDestination?.id != R.id.newPlaylistFragment) {
+            viewModel.onRelease()
+        }
     }
 
     override fun onPlaylistClick(playlist: Playlist) {

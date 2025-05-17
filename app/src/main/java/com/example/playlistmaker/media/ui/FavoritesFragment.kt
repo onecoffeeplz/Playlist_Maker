@@ -14,14 +14,12 @@ import com.example.playlistmaker.media.presentation.FavoritesViewModel
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
+import dev.androidbroadcast.vbpd.viewBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoritesFragment : Fragment(), FavoritesAdapter.OnTrackClickListener {
 
-    private var _binding: FragmentFavoritesBinding? = null
-    private val binding
-        get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentFavoritesBinding must not be null!")
+    private val binding by viewBinding(FragmentFavoritesBinding::bind)
 
     private val viewModel by viewModel<FavoritesViewModel>()
     private val trackList: MutableList<Track> = mutableListOf()
@@ -31,8 +29,7 @@ class FavoritesFragment : Fragment(), FavoritesAdapter.OnTrackClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentFavoritesBinding.inflate(inflater, container, false).root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,11 +92,6 @@ class FavoritesFragment : Fragment(), FavoritesAdapter.OnTrackClickListener {
     override fun onResume() {
         super.onResume()
         viewModel.getTracksFromFavorites()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {

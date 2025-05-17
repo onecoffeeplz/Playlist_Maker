@@ -14,13 +14,14 @@ constraintlayout = "2.2.1"
 retrofit = "2.9.0"
 koin = "4.0.2"
 legacySupportV4 = "1.0.0"
-lifecycleLivedataKtx = "2.8.7"
-lifecycleViewmodelKtx = "2.8.7"
+lifecycleLivedataKtx = "2.9.0"
+lifecycleViewmodelKtx = "2.9.0"
 fragmentKtx = "1.8.6"
-navigationFragmentKtx = "2.8.9"
-navigationUiKtx = "2.8.9"
+navigationFragmentKtx = "2.9.0"
+navigationUiKtx = "2.9.0"
 coroutinesAndroid = "1.10.1"
-room = "2.7.0"
+room = "2.7.1"
+vbpd = "2.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+vbpd = { module = "dev.androidbroadcast.vbpd:vbpd", version.ref = "vbpd"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

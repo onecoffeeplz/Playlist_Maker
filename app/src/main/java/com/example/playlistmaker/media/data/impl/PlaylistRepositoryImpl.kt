@@ -1,6 +1,7 @@
 package com.example.playlistmaker.media.data.impl
 
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -16,9 +17,12 @@ import com.example.playlistmaker.media.domain.db.PlaylistRepository
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlaylistRepositoryImpl(
     private val context: Context,
@@ -79,7 +83,7 @@ class PlaylistRepositoryImpl(
 
         appDatabase.playlistDao().addTrack(trackEntity)
 
-        val trackIdsList = playlistEntity.tracksIds?.split(",")?.map {it.trim()} ?: emptyList()
+        val trackIdsList = playlistEntity.tracksIds?.split(",")?.map { it.trim() } ?: emptyList()
         val trackInList = trackIdsList.contains(trackEntity.trackId.toString())
 
         if (trackInList) {
@@ -98,8 +102,95 @@ class PlaylistRepositoryImpl(
         }
     }
 
+    override suspend fun getPlaylistDetails(playlistId: Int): Pair<Playlist, List<Track>> {
+        val playlistEntity = appDatabase.playlistDao().getPlaylistDetails(playlistId)
+        val playlist = playlistDbConverter.map(playlistEntity)
+
+        val trackIdsString = playlistEntity.tracksIds ?: ""
+        val trackIds = trackIdsString.split(",").mapNotNull { it.trim().toIntOrNull() }
+
+        var tracks = trackIds.mapNotNull { trackId ->
+            val trackEntity = appDatabase.playlistDao().getTrackById(trackId)
+            trackDbConverter.map(trackEntity)
+        }
+        if (tracks.isNotEmpty()) tracks = tracks.reversed()
+
+        return Pair(playlist, tracks)
+    }
+
+    override suspend fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
+        val playlist = appDatabase.playlistDao().getPlaylistDetails(playlistId)
+        val tracksList =
+            playlist.tracksIds?.split(",")?.map { it.trim() }?.toMutableList() ?: mutableListOf()
+        val removed = tracksList.remove(trackId.toString())
+        val newTracksIds = if (tracksList.isEmpty()) null else tracksList.joinToString(",")
+        val updatedPlaylist = playlist.copy(
+            tracksIds = newTracksIds,
+            tracksCount = (playlist.tracksCount - if (removed) 1 else 0).coerceAtLeast(0)
+        )
+        appDatabase.playlistDao().updatePlaylist(updatedPlaylist)
+
+        val trackIsInOtherPlaylists = isTrackInAnyPlaylist(trackId)
+        if (!trackIsInOtherPlaylists) {
+            appDatabase.playlistDao().deleteTrackById(trackId)
+        }
+    }
+
+    override fun sharePlaylist(playlist: Playlist, tracks: List<Track>) {
+        val message = prepareMessage(playlist, tracks)
+        val share = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, message)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(share)
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        val playlistEntity = playlistDbConverter.map(playlist)
+        appDatabase.playlistDao().deletePlaylist(playlistEntity)
+
+        val tracksList = playlist.tracksIds?.split(",")?.mapNotNull { it.trim().toIntOrNull() } ?: emptyList()
+
+        val allPlaylists = appDatabase.playlistDao().getPlaylists().first()
+        val trackIdsInPlaylists = allPlaylists
+            .flatMap { it -> it.tracksIds?.split(",")?.mapNotNull { it.trim().toIntOrNull() } ?: emptyList() }
+            .toSet()
+
+        for (trackId in tracksList) {
+            if (!trackIdsInPlaylists.contains(trackId)) {
+                appDatabase.playlistDao().deleteTrackById(trackId)
+            }
+        }
+    }
+
+    private fun prepareMessage(playlist: Playlist, tracks: List<Track>): String {
+        val description =
+            if (!playlist.playlistDescription.isNullOrEmpty()) "\nОписание: ${playlist.playlistDescription}" else ""
+        val trackList = tracks.joinToString("\n") { track ->
+            "${tracks.indexOf(track) + 1}. ${track.artistName} - ${track.trackName} (${
+                formatDuration(
+                    track.trackTimeMillis
+                )
+            })"
+        }
+        return "**${playlist.playlistName}**$description\nКоличество треков: ${playlist.tracksCount}\n\nСписок треков:\n$trackList"
+    }
+
+    private fun formatDuration(trackTimeMillis: Long): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
+    }
+
+    private suspend fun isTrackInAnyPlaylist(trackId: Int): Boolean {
+        val allPlaylists = appDatabase.playlistDao().getPlaylists().first()
+
+        return allPlaylists.any { playlist ->
+            playlist.tracksIds?.split(",")?.map { it.trim() }?.contains(trackId.toString()) == true
+        }
+    }
+
     private fun countTracks(tracksIds: String): Int {
-        val ids = tracksIds.split(",").map { it.trim() }. filter { it.isNotEmpty() }
+        val ids = tracksIds.split(",").map { it.trim() }.filter { it.isNotEmpty() }
         return ids.size
     }
 
